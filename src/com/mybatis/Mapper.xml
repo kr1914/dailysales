@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mybatis.example.BlogMapper">
+
+	<!-- 세션아이디와 회사 키값 확인 -->
+	
+	<select id="myCoAdminCheck1" parameterType="map" resultType="int">
+		select count(*) from manager where mgr_email='${id}' and mgr_key='${key}' and mgr_admin in ('A','B','C');
+	</select>
+	
+	<select id="myCoAdminCheck2" parameterType="map" resultType="int">
+		select count(*) from manager where mgr_email='${id}' and mgr_key='${key}' and mgr_admin in ('A','B');
+	</select>
+	
+	<!-- 회사 키값으로 회사정보 출력 -->
+	<select id="MyCoView" parameterType="map" resultType="com.daily.dto.MyCompany">
+	select * from company where admin_key='${key}';
+	</select>
+  
+  <!-- 로그인 -->
+   <select id="login" parameterType="map" resultType="Map">
+    select a.m_ide as 'id', a.m_name as 'name', b.mgr_key as 'key', b.co_name as 'company', 
+    case b.mgr_admin 
+    when "A" then "마스터"
+    when "B" then "매니저"
+    when "C" then "이용자"
+    end as 'grade'
+from (select * from member where m_ide='${id}' and m_pwd='${pwd}') a left join (select * from company, manager where co_code=mgr_company) b 
+on a.m_ide=b.mgr_email;
+  </select>
+  
+  <!-- 회원가입시 아이디(이메일) 중복확인 -->
+  <select id="duplCheck" parameterType="String" resultType="boolean">
+  	select if(count(*)=1,1,0) from member where m_ide='${id}';
+  </select>
+  
+  <!-- 회사 생성 -->
+  <insert id="MyCoInsert" parameterType="com.daily.dto.MyCompany">
+  insert into company values('${co_name}','${co_code}','${co_ceo}','${co_ind}','${co_stk}','${co_post1}','${co_addr1}','${co_post2}','${co_addr2}','${co_tel}','${co_phone}','${co_fax}','${co_div}','${co_closing}','${admin_key}');
+  </insert>
+  
+ <!-- 회사 정보 수정 -->
+  <update id="MyCoModify" parameterType="com.daily.dto.MyCompany">
+  update company set co_name='${co_name}', co_code='${co_code}', co_ceo='${co_ceo}', co_ind='${co_ind}', co_stk='${co_stk}', co_post1='${co_post1}', co_addr1='${co_addr1}', co_post2='${co_post2}', co_addr2='${co_addr2}', co_tel='${co_tel}', co_phone='${co_phone}', co_fax='${co_fax}', co_div='${co_div}', co_closing='${co_closing}' where admin_key='${admin_key}';
+  </update>
+  
+  <insert id="InsertManager" parameterType="com.daily.dto.Manager">
+  insert into manager(mgr_email, mgr_company, mgr_admin, mgr_key) values('${mgr_email}','${mgr_company}','${mgr_admin}','${mgr_key}');
+  </insert>
+  
+  <!-- 거래처 등록 -->
+  <insert id="custInsert" parameterType="com.daily.dto.Customer">
+  insert into customer(cust_name, cust_cla, cust_bizcode, cust_ceo, cust_ind, cust_stk, cust_post1, cust_addr1, cust_post2, cust_addr2,
+  cust_tel, cust_phone, cust_fax, cust_email, cust_account, cust_memo, admin_key) values(
+  '${cust_name}','${cust_cla}','${cust_bizcode}','${cust_ceo}','${cust_ind}','${cust_stk}','${cust_post1}','${cust_addr1}','${cust_post2}','${cust_addr2}',
+  '${cust_tel}','${cust_phone}','${cust_fax}','${cust_email}','${cust_account}','${cust_memo}','${admin_key}');
+  </insert>
+  <!-- 거래처 리스트 조회(전체) -->
+  <select id="custListView" parameterType="String" resultType="map">
+  select * from customer where admin_key='${key}';
+  </select>
+  <!-- 거래처 상세 정보 -->
+  <select id="custViewDetail" parameterType="map" resultType="com.daily.dto.Customer">
+  select * from customer where cust_code=${code} and admin_key='${admin_key}';
+  </select>
+  <!-- 거래처 삭제 -->
+  <delete id="custDelete" parameterType="map">
+  delete from customer where cust_code=${code} and admin_key='${admin_key}';
+  </delete>
+  <!-- 거래처 정보 수정 -->
+  <update id="custModify" parameterType="com.daily.dto.Customer">
+    update customer set cust_name='${cust_name}', cust_cla='${cust_cla}', cust_bizcode='${cust_bizcode}', cust_ceo='${cust_ceo}', cust_ind='${cust_ind}', cust_stk='${cust_stk}', cust_post1='${cust_post1}', cust_addr1='${cust_addr1}', cust_post2='${cust_post2}', cust_addr2='${cust_addr2}',
+  cust_tel='${cust_tel}', cust_phone='${cust_phone}', cust_fax='${cust_fax}', cust_email='${cust_email}', cust_account='${cust_account}', cust_memo='${cust_memo}' where cust_code=${cust_code} and admin_key='${admin_key}';
+  </update>
+  <!-- 거래처 검색(전체 컬럼) -->
+  <select id="custSearchAll" parameterType="map" resultType="map">
+  select * from (select * from customer where admin_key='${adkey}') cus where concat(cust_name,cust_cla,cust_bizcode,cust_ceo,cust_tel,cust_phone,cust_fax,cust_ind,cust_stk,cust_addr1,cust_addr2,cust_email) regexp '${keyword}' ${sortOption};
+  </select>
+  <!-- 거래처 검색(검색어 없음) -->
+  <select id="custSearchSpace" parameterType="map" resultType="map">
+  select * from (select * from customer where admin_key='${adkey}') cust ${sortOption}; 
+  </select>
+  <!-- 거래처 검색 -->
+  <select id="custSearchList" parameterType="map" resultType="map">
+  select * from customer where admin_key='${adkey}' and ${option} like '%${keyword}%' ${sortOption};
+  </select>
+  <!-- 상품 목록조회 -->
+  <select id="stkListView" parameterType="String" resultType="map">
+  select * from stock where admin_key='${key}';
+  </select>
+  <!-- 상품 생성 -->
+  <insert id="stkInsert" parameterType="com.daily.dto.Stock">
+  insert into stock(stk_name, stk_cla, stk_size1, stk_size2, stk_unit, stk_price, stk_vat, stk_date, stk_amount, stk_memo, admin_key) values(
+  '${stk_name}','${stk_cla}','${stk_size1}','${stk_size2}','${stk_unit}',${stk_price},'${stk_vat}',${stk_date},'${stk_amount}','${stk_memo}','${admin_key}');
+  </insert>
+  <!-- 상품 상세 조회 -->
+	<select id="stkViewDetail" parameterType="map" resultType="com.daily.dto.Stock">
+	select * from (select * from stock where admin_key="${admin_key}") stk where stk_code=${code};
+	</select>  
+	<!-- 상품 정보 수정 -->
+	<update id="stkModify" parameterType="com.daily.dto.Stock">
+		update stock set stk_name='${stk_name}', stk_cla='${stk_cla}', stk_size1='${stk_size1}', stk_size2='${stk_size2}', stk_unit='${stk_unit}', stk_price=${stk_price}, stk_vat='${stk_vat}', stk_date=${stk_date}, stk_amount='${stk_amount}', stk_memo='${stk_memo}' where stk_code=${stk_code} and admin_key='${admin_key}';
+	</update>
+	<!-- 상품 정보 삭제 -->
+	<delete id="stkDelete">
+		delete from stock where stk_code=${code} and admin_key='${admin_key}';
+	</delete>
+<!-- 상품 정보 검색 (분류 전체, 검색어 있음) -->
+	<select id="stkSearchAll" parameterType="map" resultType="map">
+		select * from (select * from stock where admin_key='${adkey}') stk where concat(stk_name,stk_cla,stk_size1,stk_size2,stk_date) regexp '${keyword}' ${sortOption};
+	</select>
+<!-- 상품 정보 검색 (검색어 없음) -->
+   <select id="stkSearchSpace" parameterType="map" resultType="map">
+  select * from (select * from stock where admin_key='${adkey}') stk ${sortOption}; 
+  </select>
+<!-- 상품 검색 (분류 있음, 검색어 있음) -->
+  <select id="stkSearchList" parameterType="map" resultType="map">
+  select * from stock where admin_key='${adkey}' and ${option} like '%${keyword}%' ${sortOption};
+  </select>
+<!-- 계좌 목록 조회 -->
+  <select id="acctListView" parameterType="String" resultType="map">
+  select * from bank_account where admin_key='${key}';
+  </select>
+<!-- 계좌 생성 -->
+    <insert id="acctInsert" parameterType="com.daily.dto.BankAccount">
+  insert into bank_account(acct_name, acct_bank, acct_owner, acct_id, acct_cla, acct_memo, admin_key) values('${acct_name}','${acct_bank}','${acct_owner}','${acct_id}','${acct_cla}','${acct_memo}','${admin_key}');
+  </insert>
+<!-- 계좌 상세 조회 -->
+	<select id="acctViewDetail" parameterType="map" resultType="com.daily.dto.BankAccount">
+	select * from (select * from bank_account where admin_key="${admin_key}") acct where acct_code=${code};
+	</select> 
+<!-- 계좌 정보 수정 -->
+	<update id="acctModify" parameterType="com.daily.dto.BankAccount">
+		update bank_account set acct_name='${acct_name}', acct_cla='${acct_cla}', acct_bank='${acct_bank}', acct_owner='${acct_owner}', acct_id='${acct_id}', acct_memo='${acct_memo}' where acct_code=${acct_code} and admin_key='${admin_key}';
+	</update>
+<!-- 상품 정보 삭제 -->
+	<delete id="acctDelete">
+		delete from bank_account where acct_code=${code} and admin_key='${admin_key}';
+	</delete>
+<!-- 상품 정보 검색 (분류 전체, 검색어 있음) -->
+	<select id="acctSearchAll" parameterType="map" resultType="map">
+		select * from (select * from bank_account where admin_key='${adkey}') acct where concat(acct_name,acct_cla,acct_bank,acct_owner,acct_id) regexp '${keyword}' ${sortOption};
+	</select>
+<!-- 상품 정보 검색 (검색어 없음) -->
+   <select id="acctSearchSpace" parameterType="map" resultType="map">
+  select * from (select * from bank_account where admin_key='${adkey}') acct ${sortOption}; 
+  </select>
+<!-- 상품 검색 (분류 있음, 검색어 있음) -->
+  <select id="acctSearchList" parameterType="map" resultType="map">
+  select * from bank_account where admin_key='${adkey}' and ${option} like '%${keyword}%' ${sortOption};
+  </select>
+	  
+  <!-- 거래 입력 -->
+  <insert id="insertTransaction" parameterType="map" >
+  insert into transaction values(null, '${slipType}', '${date}', '${admin_key}');
+  <selectKey keyProperty="lastid" resultType="Integer" order="AFTER">
+  select last_insert_id();
+  </selectKey>
+  </insert>
+  <insert id="insertTrans" parameterType="map">
+		<choose>
+		 	<when test="slipType != null and slipType == '매출'">
+					insert into tran_slip values(null, ${lastid}, 108, ${custcode}, ${total}, '차변'),(null, ${lastid}, 412, ${custcode}, ${amount}, '대변')
+			   <if test='vat != null and vat != ""'>
+					,(null, ${lastid}, 255, ${custcode}, ${vat}, '대변')
+			   </if>
+			   ;
+		 	</when>
+		 	<when test="slipType != null and slipType == '수금'">
+		 		<choose>
+		 			<when test="type != null and type == '현금'"><!-- 101:현금 , 108:외상매출금 -->
+						insert into tran_slip values(null, ${lastid}, 101, ${custcode}, ${collect}, '차변'),(null, ${lastid}, 108, ${custcode}, ${collect}, '대변');
+		 			</when>
+		 			<when test="type != null and type == '계좌'"><!-- 102:당좌예금 , 108:외상매출금 -->
+						insert into tran_slip values(null, ${lastid}, 102, ${custcode}, ${collect}, '차변'),(null, ${lastid}, 108, ${custcode}, ${collect}, '대변');
+		 			</when>
+		 		</choose>
+		 	</when>
+		</choose>
+	</insert>
+	<insert id="insertTransBook" parameterType="map">
+			<choose>
+			 	<when test="slipType != null and slipType == '매출'">
+					insert into tran_stk values(null, ${lastid}, ${stkcode}, ${quantity}, ${price});
+			 	</when>
+			 	<when test="slipType != null and slipType == '수금'">
+					insert into tran_acct values(null, ${lastid}, ${acct_code}, ${collect});
+			 	</when>
+			</choose>
+	</insert>
+	
+	<select id="selectSlipList" parameterType="map">
+	select tran_index, tran_cla, sl_cust, amount, vat, stk_code, stk_name, size, stk_vat, ta_acct, ta_amount, acct_name, sl_sub, cu
+from (select tran_index, tran_cla
+	from transaction
+	where tran_date = '${date}' and admin_key = '${admin_key}') tran
+left join (select sl_tran, sl_amount amount, sl_cust
+		from tran_slip
+		where sl_sub = 412 and sl_cla='대변') sal
+on tran.tran_index = sal.sl_tran
+left join (select sl_tran, sl_amount vat
+		from tran_slip
+		where sl_sub = 255 and sl_cla='대변') vat
+on tran.tran_index = vat.sl_tran
+left join (select ts_tran, stk_code, ts_quantity, ts_price, stk_name, concat(stk_size1,"/",stk_size2) size, stk_vat
+			from tran_stk
+			left join stock on ts_stk = stk_code) stk
+on tran.tran_index = stk.ts_tran
+left join (select ta_tran, ta_acct, ta_amount, acct_name
+			from tran_acct
+			left join bank_account on ta_acct = acct_code) acct
+on tran.tran_index = acct.ta_tran
+left join (select sl_tran, sl_sub, sl_amount, sl_cust cu
+			from tran_slip
+			where sl_sub in (101, 102) and sl_cla = "차변") accts
+on tran.tran_index = accts.sl_tran
+where sl_cust = ${custcode} or cu = ${custcode}
+order by tran_index;
+	</select>
+</mapper>

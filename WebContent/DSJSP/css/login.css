@@ -1,0 +1,142 @@
+.popupOverlay{
+	display: inline-block;
+	position:fixed; 
+	width: 100%; 
+	height: 100%; 
+	top:0; 
+	left:0; 
+	background:rgba(0,0,0,0.5);
+	z-index:55;
+}
+
+.popupLogin {
+	position : absolute;
+	width: 400px;
+	height : 400px;
+	top: 50%;
+	left: 50%;
+	transform:translate(-50%,-50%);
+	padding : 10px;
+	background-color: white;
+	z-index:60;
+}
+#loginCloseBtn{
+	position: absolute;
+	right: 10px;
+	top: 10px;
+}
+
+#loginCloseBtn > img {
+	width:20px;
+
+}
+
+
+
+#loginTitle{
+  width:350px;
+  height : 50px;
+  text-align: center;
+  padding: 15px;
+  margin : 0 auto;
+  margin-top: 15px;
+}
+#loginTitle > span{
+  font-size: 25px;
+  font-weight: bold;
+
+}
+
+
+#loginWrapper{
+  width : 430px;
+  height : 450px;
+  font-weight: bold;
+  margin : 0 auto;
+
+}
+#loginContainer{
+  width : 100%;
+  height : 370px;
+  padding:15px;
+}
+#loginForm > label, #loginForm > input, .loginBtn{
+  display: block;
+
+}
+#loginForm > label{
+  width: 100%;
+  font-size:13px;
+  margin-top: 20px;
+}
+.input {
+  width: 87%;
+  height: 30px;
+  border: none;
+  border-radius : 10px;
+  box-sizing: border-box;
+  padding-left:10px;
+  font-size: 13px;
+  border-bottom: solid 2px #dacaca;
+  margin-top: 5px;
+}
+#loginFindPwd{
+  margin-top: 15px;
+}
+#loginFindPwd > a{
+  text-decoration: inherit;
+  font-size:13px;
+  
+}
+.loginBtn{
+  font-size: 20px;
+  font-weight: bold;
+  background-color: #dacaca;
+  border: none;
+  border-radius: 5px;
+  width: 350px;
+  height : 40px;
+  margin-top: 15px;
+}
+
+
+#loginForm>input:focus{
+  border: none;
+  outline: none;
+  border-bottom: solid 3px #795555;
+  transition: 0.1s
+}
+
+#wrongMassage{
+	color: #ff6a6a;
+	display:none;
+	margin-top:10px;
+	font-size: 12px;
+	
+}
+
+
+#loginFooter{
+  width:100%;
+  height:50px;
+  margin: 0 auto;
+
+}
+
+#createAccount{
+  width: 350px;
+  height:40px;
+  text-align: center;
+  border-radius: 5px;
+  background-color:#f1f1f1;
+	padding-top:12px;
+	font-size: 15px;
+    color: #333333;
+    margin-top:5px;
+  
+}
+#createAccount > a {
+	text-decoration: none;
+}
+
+

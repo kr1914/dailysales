@@ -1,0 +1,235 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+  box-sizing: border-box;
+}
+
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+html,body{
+  margin: 0;
+  padding: 0 0 0 0;
+  width: 100%;
+}
+.row{
+	margin : 0;
+}
+
+nav{
+  width: 200px;
+  height: 1000px;
+  background-color: #dcdcdc;
+  padding: 0 14px 0px 14px;
+	position: absolute;
+	text-align: center;
+}
+#nav_slider{
+	width: 10px;
+	height : 45px;
+	background-color: gray;
+	float: right;
+	margin-right: -24px;
+	margin-top: 45px;
+}
+#logo{
+	margin-top: 20px;
+}
+#nav_login, #nav_logout{
+  width : 175px;
+  height : 25px;
+	margin-top: 10px;
+}
+/*�쉶�썝�젙蹂댁갹*/
+#acInfo{
+	width : 175px;
+	height : 200px;
+	margin-top: 20px;
+	padding: 15px;
+	border-radius: 19px;
+	background-color: #dcdcdc;
+	box-shadow: 1px 1px 3px 1px #bfacac inset;
+}
+#timer{
+	font-size: 30px;
+	font-weight: bold;
+	margin-top: 15px;
+}
+.myCo{font-size: 10px; margin-top:15px; display: inline-block;}
+.myCoStartBtn{font-size: 10px; display: inline-block; margin-left: 10px;}
+#acInfo > div > span {
+	font-size: 13px;
+	font-weight: bold;
+}
+
+#nav_menu > ul {
+  margin-top: 20px;
+  padding: 0px;
+	text-align: left;
+}
+
+.nav_btn {
+  width: 175px;
+  height: 36px;
+  margin: 0px;
+  margin-top: 8px;
+  padding: 0 0 0 0;
+  list-style-type: none;
+  background: #dacaca;
+  border-radius: 22px;
+	position: relative;
+	box-shadow: 0 3px 0 0 rgba(113,111,203, 0.5);
+	z-index: 50;
+}
+.nav_btn:hover{
+  background-color: #6966E1;
+}
+
+/* �꽕鍮� _ �븘�씠肄섍낵 臾멸뎄*/
+#nav_menu > ul > li > div > span{
+  margin: 11px 0 0 10px;
+  padding: 0px;
+  position: absolute;
+  font-size: 13px;
+  font-weight: bold;
+	color: #211d1d;
+}
+#nav_menu > ul > li > div > img {
+	width: 24px;
+	height: 24px;
+	margin: 6px 0 0 15px;
+	display: inline-block;
+}
+/*�꽕鍮� �긽�꽭 硫붾돱 �몴�떆*/
+.nav_btn_slide{
+	width: 175px;
+	font-size: 12px;
+	text-align: center;
+	line-height: 30px;
+	background-color: #f1f1f1;
+	box-shadow: 1px 1px 3px 1px #bfacac inset;
+	margin-top: -18px;
+	padding-top: 20px;
+	padding-bottom: 10px;
+	z-index: 0;
+	border-radius: 0 0 22px 22px / 0 0 22px 22px;
+}
+.nav_btn_slide > ul {
+}
+
+/*�룄��留� �젣嫄� �븞�궡*/
+.tutorial{
+	margin-top: 20px;
+	float: left;
+	font-size: 12px;
+	vertical-align: middle;
+}
+.tutorial > label{
+	position: relative;
+	top: -2px;
+	padding-left: 10px;
+}
+
+#header_nav{
+	width:100%;
+	height: 45px;
+	background-color: #4C49CF;
+}
+
+.header_nav {float:right; margin-right:140px; margin-top:6px;}
+.header_nav > ol > li{
+	text-align: center;
+    width: 80px;
+    height: 30px;
+    padding-top: 9px;
+    background-color: #6f6ddf;
+    display: inline-block;
+    list-style-type: none;
+    color: white;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 12px;
+     }
+
+
+.wrap {
+	width: 100%;
+	height : 1000px;
+	padding-left: 200px;
+}
+
+}
+body > div > header{
+  width: 100%;
+  min-width: 900px;
+  height: 46px;
+  background-color: #4C49CF;
+  position: relative;
+  top: 0px;
+  left: 0px;
+  margin: 0;
+  z-index: 1010;
+}
+#header_login{
+  width: 104px;
+  height: 30px;
+  background-color: #211D1D;
+  border-radius: 9px;
+  text-align: center;
+  position: absolute;
+  right: 14px;
+  top: 8px;
+  padding: 0px;
+}
+#header_login > p {
+  margin: 0px;
+  margin-top: 6px;
+  font-size: 13px;
+  color: #D9CCCC;
+}
+
+
+iframe {
+	padding: 0;
+	padding-left:10px;
+	width : 100%;
+	height : 93%;
+	overflow-x : hidden;
+}
+
