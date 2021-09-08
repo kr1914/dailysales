@@ -278,7 +278,7 @@ nav{width:100%; height: 50px;}
 			});
 			$(document).on('dblclick','.CustMgtTable td', function() {
 				selectCust($(this));
-				//selectSlip();
+				selectSlips($('input[name="cust_code"]').val(),$('input[name="date"]').val());
 			});
 
 		</script>

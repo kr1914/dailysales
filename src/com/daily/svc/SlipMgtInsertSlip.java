@@ -19,9 +19,7 @@ public class SlipMgtInsertSlip {
 		DbAcesse dba = DbAcesse.getInstance();
 		
 		int result = dba.insertTransaction(sl);
-		
-		System.out.println(result);
-		
+
 		if(result > 0) {
 			dba.commit();
 			r = true;

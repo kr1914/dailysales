@@ -13,6 +13,7 @@ import com.daily.dto.ActionForward;
 import com.daily.dto.Customer;
 import com.daily.svc.AdminCheck;
 import com.daily.svc.CustViewDetail;
+import com.daily.svc.WrongMasageSend;
 
 public class CustMgtView implements Action {
 
@@ -32,19 +33,11 @@ public class CustMgtView implements Action {
 		String custCode = request.getParameter("CustCode"); 
 		
 		if(session.getAttribute("Login")==null) {
-			response.setContentType("text/html;charset=UTF-8");
-			PrintWriter out = response.getWriter();
-			out.println("<script>");
-			out.println("alert('로그인이 필요합니다.')");
-			out.println("history.back();");
-			out.println("</script>");
+			WrongMasageSend wr = new WrongMasageSend();
+			wr.wrongAccess("로그인이 필요합니다.", response);
 		}else if(session.getAttribute("nowCo")== null){
-			response.setContentType("text/html;charset=UTF-8");
-			PrintWriter out = response.getWriter();
-			out.println("<script>");
-			out.println("alert('회사를 생성해주세요.')");
-			out.println("history.back();");
-			out.println("</script>");
+			WrongMasageSend wr = new WrongMasageSend();
+			wr.wrongAccess("회사 정보를 찾을 수 없습니다.", response);
 		}else {
 			//권한 체크 부분 (myCoCheckAdminFree)
 			admin = AdminCheck.getInstance();
@@ -67,12 +60,8 @@ public class CustMgtView implements Action {
 				cs = cvd.excute(params);
 				//여기 다음이
 			}else {
-				response.setContentType("text/html;charset=UTF-8");
-				PrintWriter out = response.getWriter();
-				out.println("<script>");
-				out.println("alert('권한 에러')");
-				out.println("history.back();");
-				out.println("</script>");
+				WrongMasageSend wr = new WrongMasageSend();
+				wr.wrongAccess("권한이 부족합니다.", response);
 			}
 			
 			request.setAttribute("Customer", cs);

@@ -219,7 +219,21 @@ public class DbAcesse {
 		}
 		return check;
 	}
+//메인페이지 일자별 매출 차트 자료
+	public List<Map<String, Object>> saleChartData(String key){
 		
+		check = session.selectList("salesChartData", key);
+		
+		return check;
+	}
+//메인페이지 거래처별 매출 자료
+	public List<Map<String, Object>> salesCustChart(String key){
+		
+		check = session.selectList("salesCustChart", key);
+		
+		return check;
+	}	
+	
 		
 //매출전표입력
 	//거래관리
@@ -236,9 +250,37 @@ public class DbAcesse {
 		return result;
 	}
 	
+	public int modifyTransaction(HashMap<String, String> slip) {
+			
+			String a = session.selectOne("vatCheck", slip);
+			System.out.println(slip);
+			if(a!=null) {
+				result = session.update("updateTrans", slip);
+			}else if(a==null) {
+				result = session.update("updateTransAndVat", slip);
+			}
+			
+			session.update("updateTransBook", slip);
+
+		
+		return result;
+	}
+	
 	public List<HashMap<String, Object>> selectSlipList(Map<String, String> key){
 		slips = session.selectList("selectSlipList",key);
 		return slips;
+	}
+//메인 페이지 게시글
+	public List<Map<String, Object>> mainpageArticles(){
+		check = session.selectList("mainPageArticles");
+		
+		return check;
+	}
+// 메인 페이지 가이드 게시판
+	public List<Map<String, Object>> mainPageGuide(){
+		check = session.selectList("mainPageGuide");
+		
+		return check;
 	}
 		
 		

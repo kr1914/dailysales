@@ -96,6 +96,8 @@
 	.mainText{width:100%;min-height:500px;}
 	.thumbsUp{width:100%;height:50px;margin: 0 auto; text-align: center; margin-top:15px;margin-bottom:15px;}
 	.bi{width:50px;height:50px;}
+	.modifyBtn{border: none;    background-color: #c9c9e8;    height: 25px;    font-size: 13px;    font-weight: bold;}
+	.backBtn{border: none;    background-color: #fdd0eb;    height: 25px;    font-size: 13px;    font-weight: bold;}
 </style>
 <body>
 	<div class="wrap">
@@ -129,9 +131,9 @@
 				</c:forEach>
 			</div>
 				<c:if test="${ID eq pos.bd_creator}">
-					<input type="button" value="수정하기" onclick="modify()">
+					<input class="modifyBtn" type="button" value="수정하기" onclick="modify()">
 				</c:if>
-					<input type="button" value="이전으로" onclick="back()">
+					<input class="backBtn" type="button" value="이전으로" onclick="back()">
 			
 			</c:forEach>
 		</div>

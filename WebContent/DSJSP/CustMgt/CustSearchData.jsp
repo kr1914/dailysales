@@ -3,7 +3,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%
-	System.out.println("11");
 	List<Map<String, Object>> custlist;
 	custlist = (List<Map<String, Object>>)session.getAttribute("custlist");%>
 <table class="CustMgtTable_View">

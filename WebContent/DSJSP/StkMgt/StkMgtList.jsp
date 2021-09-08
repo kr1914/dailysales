@@ -248,13 +248,13 @@ nav{width:100%; height: 50px;}
 				<div class="StkMgtTable">
 					<table class="StkMgtTable_View">
 							<tr>
-								<th style="width:8%">No.</th>
-								<th style="width:15%">구분</th>
-								<th style="width:30%">상품명</th>
-								<th style="width:15%">규격1</th>
-								<th style="width:15%">규격2</th>
-								<th style="width:8%">입고일자</th>
-								<th style="width:9%">재고</th>
+								<th style="width:45px">No.</th>
+								<th style="width:80px">구분</th>
+								<th style="width:220px">상품명</th>
+								<th style="width:100px">규격1</th>
+								<th style="width:100px">규격2</th>
+								<th style="width:100px">입고일자</th>
+								<th style="width:100px">재고</th>
 							</tr>
 							<%if(stkList.size() == 0){ %>
 							<tr>

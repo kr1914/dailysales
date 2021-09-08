@@ -15,16 +15,21 @@
 .wrap{width:960px; height:100%;}
 .SlipHeader{width:1000px; height: 300px; vertical-align: top;}
 .SlipInsertTitle{width:1000px; height: 50px; magin-top: 20px;}
-.CustInfoContainer{width:420px; display: inline-block; height: 260px; border: solid 1px gray; border-radius:19px; padding: 10px; float:left;}
-.CustInfoTable { margin-top:30px;}
-.CustInfoTable > tbody > tr > td {margin-top:5px; margin-bottom: 5px;}
+.CustInfoContainer{width:420px; display: inline-block; height: 260px; border: solid 1px #cccccc; box-shadow: -2px 4px 8px 2px #e2e2e2; border-radius:19px; padding: 10px; float:left;}
+.CustInfoContainer > div { font-weight:bold;}
+#custSearchbar{border-radius: 5px;    border: solid 0.5px #a7a7a7;}
+#custSearchbar:focus{outline: solid 2px blue; outline-radius:5px;}
+#custSearchButton{margin-left: 10px;  border-radius: 5px;  width: 40px;    height: 24px;    border: none;    font-size: 12px;    background-color: #cacaff; font-weight: bold;}
+.CustInfoTable { margin-top:30px; border-spacing: 5px; border-collapse: separate;}
+.CustInfoTable > tbody > tr > td {margin-top:5px; margin-bottom: 5px; box-shadow: 0px 3px 5px 1px #d8d8d8;}
 .CustInfoTable > tbody > tr > td:last-child{width: 200px; padding-left:10px;}
 .custName > td{font-size: 20px; font-weight: bold; color: red; margin-top:10px;}
-.SalesStateContainer{border-radius:19px; float:left; margin-left:5px; width:300px; display: inline-block;  height: 260px;  border: solid 1px gray; padding: 20px;}
-.SalesStateDiv{margin-top: 20px;}
-.SalesStateTable > tbody > tr > td:first-child { width: 80px; text-align: center; font-size: 17px;}
-.SalesStateTable > tbody > tr > td:last-child { width: 130px;  text-align: right;  font-size: 17px;}
-#calenderContainer {border-radius:19px; width:230px; height: 260px; padding: 10px; display: inline-block; border: solid 1px gray;  float:left;  margin-left:5px;}
+.SalesStateContainer{border-radius:19px; float:left; margin-left:5px; width:300px; display: inline-block;  height: 260px;  border: solid 1px #cccccc;    box-shadow: 3px 4px 8px 2px #e2e2e2; padding: 20px;}
+.SalesStateDiv{margin-top: 45px;}
+.SalesStateTable{ width:100%;}
+.SalesStateTable > tbody > tr > td:first-child { width: 80px; text-align: center; font-size: 15px; padding:4px;}
+.SalesStateTable > tbody > tr > td:last-child { width: 130px;  text-align: right;  font-size: 15px;}
+#calenderContainer {border-radius:19px; width:230px; height: 260px; padding: 10px; display: inline-block;     box-shadow: 2px 4px 8px 2px #e2e2e2;     border: solid 1px #cccccc;  float:left;  margin-left:5px;}
 .calenderBox{width:100%;}
 .Slipdate{height:20px;}
 .InquireSlip{font-size: 11px; height:20px;}
@@ -52,19 +57,27 @@
 .journalizingBtn{ background-color: #adadad;     color: #fbfde2;    border: none;    height: 30px;    width: 50px;    box-shadow: inset -2px -2px 6px -1px #636363;}
 .journalizingBtn:active{box-shadow: inset 1px 2px 6px -1px #636363;}
 .TabBtnContainer{text-align: center;}
-input[state="update"]{text-align: right;}
+td[state="update"]>span>input{text-align: right;    border: solid 0.5px #5fcc5f;    border-radius: 3px;}
+td[state="update"]>span>input:focus{outline: solid 2px green;}
 <!--아래 테이블 부분-->
 .SlipViewerContainer{width:100%; height: 500px;}
 #SlipViewer{width:960px;  }
-#SlipViewer th{border: solid 1px gray; text-align: center; overflow-x:hidden;}
-#SlipViewer td{border: solid 1px gray;}
+#SlipViewer th{border: solid 1px #c7c7c7; text-align: center; overflow-x:hidden;}
+#SlipViewer td{border: solid 1px #c7c7c7;}
 #SlipData td:nth-child(n+4){text-align: right;}
+#SlipData td:nth-child(1), #SlipData td:nth-child(2) ,#SlipData td:nth-child(3){text-align: center;}
 #SlipData > tr:nth-child(2n) > td{background-color:#f1f1f1;}
 .SlipInput{width:100%; height: 22px;}
+#rowCreate{border: none;  border-radius: 5px;  margin: 5px;    font-size: 11px;    width: 50px;    height: 20px;    font-weight: bold;    background-color: #ffd2d2;}
+.SlipController{text-align: right;}
+#save{border: none;    margin: 5px;   border-radius: 5px; font-size: 12px;    width: 50px;    height: 30px;    font-weight: bold;    background-color: #c9dcf9;}
+#reset{    border: none;    margin: 5px;  border-radius: 5px;  font-size: 12px;    width: 50px;    height: 30px;    font-weight: bold;    background-color: #d6fbc4;}
+
+
 </style>
 <script type="text/javascript">
 
-var SlipData = new Array(); //전표 송신시 사용하는 객체배열
+
 
 //달력 날짜 클릭시 css효과
 function clickDate(date) {
@@ -93,7 +106,7 @@ function searchCust(word) {
 		success: function(e) {
 			if(e.indexOf('<input type="hidden" value="OneData">')!=-1){
 				$('.CustInfoTable').html(e);
-				
+				selectSlips($('input[name="cust_code"]').val(),$('input[name="date"]').val());
 			}else if(e.indexOf('<input type="hidden" value="ListData">')!=-1){
 				$('#pager').html(e);
 			}else if(e.indexOf('<input type="hidden" value="None">')!=-1){
@@ -158,7 +171,7 @@ function SlipTableRowCreate() {
 	var row = '<tr><td class="no" state="view"><span>'+lastRow+'</span><input type="hidden" name="tran_index" value=""></td>	<td class="stk_name" state="view"><span></span><input type="hidden" name="stk_code" value=""><input type="hidden" name="stk_vat" value=""></td><td class="stk_size1" state="view"><span></span></td><td class="quantity" state="view"><span></span></td><td class="price" state="view"><span></span></td><td class="amount" state="view"><span></span></td><td class="vat" state="view"><span></span></td><td class="collect" state="view"><span></span><input type="hidden" name="colType" value=""><input type="hidden" name="acct_code" value=""></td><td class="memo" state="view"><span></span></td></tr>';
 	$('#SlipData').append(row);
 }
-
+var SlipData = new Array(); //전표 송신시 사용하는 객체배열
 //전표데이터 추출
 function slipsData() {
 	var tablerow = $('#SlipData tr').length; //테이블 행 수
@@ -166,7 +179,7 @@ function slipsData() {
 		var slipT;
 		if($('#SlipData td[class="stk_name"]').eq(i).children('input[name="stk_code"]').val() != null && $('#SlipData td[class="stk_name"]').eq(i).children('input[name="stk_code"]').val() != ""){
 			slipT = "매출";
-		}else if($('#SlipData td[class="collect"]').eq(i).children('input[name="colType"]').val() == "현금" || $('#SlipData td[class="collect"]').eq(i).children('input[name="colType"]').val() == "계좌"){
+		}else if($('#SlipData td[class="collect"]').eq(i).children('input[name="colType"]').val() == "101" || $('#SlipData td[class="collect"]').eq(i).children('input[name="colType"]').val() == "102"){
 			slipT = "수금";
 		}
 		SlipData[i] = {
@@ -184,7 +197,19 @@ function slipsData() {
 				slipType: slipT,
 		}
 	}
-	return SlipData;
+}
+//전표 저장 기능
+function saveSlip(data) {
+	$.ajax({
+		url:"saveSlip.do",
+		data : {target:JSON.stringify(data)},
+		error:function(request,status,error){
+		    alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+		},
+		success: function(e) {
+			alert("저장완료");
+		}
+	});
 }
 //전표저장시 데이터 없는 행 삭제
 function rowRemove() {
@@ -207,24 +232,12 @@ $(document).on('click','#save', function() {
 	rowRemove();
 	slipsData()
 	saveSlip(SlipData);
+	calSales();
 });
 
 
-function saveSlip(data) {
-	$.ajax({
-		url:"saveSlip.do",
-		data : {target:JSON.stringify(data)},
-		dataType: "json",
-		error: function(er) {
-			alert("에러");
-		},
-		success: function(e) {
-			alert("저장완료");
-		}
-		
-	});
-}
-	
+
+//전표 조회 기능
 function selectSlips(custcode, date) {
 	$.ajax({
 		url:"selectSlips.do",
@@ -233,11 +246,50 @@ function selectSlips(custcode, date) {
 			alert("조회 실패");
 		},
 		success: function(e) {
-			alert("조회 성공");
+			$('#SlipData').html(e);
+			SlipTableRowCreate();
+			SlipTableRowCreate();
 		}
 	});
 }
-
+//합계표 계산식
+function calSales() {
+	var sal=0;
+	var vat=0;
+	var amt=0;
+	var col=0;
+	var gap=0;
+	$('td[class="amount"]').each(function(index, item) { //매출계산
+		if($(this).attr('state')=="view"){
+			sal = Number(sal) + Number($(item).children('span').text());	
+		}else{
+			sal = Number(sal) + Number($(item).children('span').children('input').val());
+		}
+	});
+	$('td[class="vat"]').each(function(index, item) { //부가세
+		if($(this).attr('state')=="view"){
+			vat = Number(vat) + Number($(item).children('span').text());	
+		}else{
+			vat = Number(vat) + Number($(item).children('span').children('input').val());
+		}
+	});
+	amt = Number(sal) + Number(vat);
+	$('td[class="collect"]').each(function(index, item) { //부가세
+		if($(this).attr('state')=="view"){
+			col = Number(col) + Number($(item).children('span').text());	
+		}else{
+			col = Number(col) + Number($(item).children('span').children('input').val());
+		}
+	});
+	gap = amt - col;
+	
+	$('#sal').text(sal);
+	$('#vat').text(vat);
+	$('#amt').text(amt);
+	$('#col').text(col);
+	$('#gap').text(gap);
+	
+}
 
 
 
@@ -266,7 +318,7 @@ function CollectPop(td) {
 		'width':'30px',
 	});
 	$('#Pop').fadeIn(500);
-	$('#Pop').children('input[value="계좌"]').focus();
+	$('#Pop').children('input[value="102"]').focus();
 	$('#Pop').keyup(function(e) {
 		if(e.keyCode == 13){
 			if($('input[name="paymentMethod"][value="현금"]').is(':checked')){
@@ -282,7 +334,8 @@ function CollectPop(td) {
 //현금입력하기
 function cashInput() {
 	var update = $('#SlipData td[class="collect"][state="update"]');
-	update.children('input[name="colType"]').val("현금");
+	update.children('input[name="colType"]').val("101");
+	update.children('input[name="acct_code"]').val('1');
 	update.children('span').children('input').removeAttr('readonly');
 	
 	
@@ -304,12 +357,14 @@ function accountInput() {
 //계좌 선택 기능
 function selectAcct(code, name) {
 	var update = $('#SlipData td[class="collect"][state="update"]'); //입력중인 수금칸 td
-	update.children('input[name="colType"]').val("계좌"); //수금 타입 입력
+	update.children('input[name="colType"]').val("102"); //수금 타입 입력
 	update.children('input[name="acct_code"]').val(code); //수금
 	update.next('td').children('span').children('input[name="memo"]').val(name); //비고란에 계좌이름 입력
 	update.next('td').children('span').children('input[name="memo"]').attr('readonly','readonly');
 	update.children('span').children('input').removeAttr('readonly');
+	$('#SlipData td[class="stk_name"][state="update"]').children('span').children('input[name="stk_name"]').attr('disabled','disabled');
 	update.children('span').children('input').select();
+	
 }
 //수금선택창 팝업 닫기
 function closePop(){
@@ -319,27 +374,13 @@ function closePop(){
 
 $(document).on('keydown','#Pop', function() {
 	var sel = $(this).children('input[selected]').val();
-	if(sel == "현금"){
+	if(sel == "101"){
 		
-	}else if(sel == "계좌"){
+	}else if(sel == "102"){
 		
 	}
 });
 
-//수금입력 기능
-function insertAccount() {
-	$.ajax({
-		url:"",
-		type:"post",
-		data: {},
-		error: function() {
-			alert("연결 오류");
-		},
-		success: function(e) {
-			$('#pager').html(e);
-		}
-	});
-}
 
 
 
@@ -383,19 +424,7 @@ function calend(today) {
 	$('#CalenderYear').text(year+"년");
 	dateFocus(today.getDate());
 }
-//거래처 검색시 전표 조회 기능
-function selectSlip(date, code) {
-	$.ajax({
-		url:"",
-		data:{date:date,code:code},
-		error: function() {
-			
-		},
-		success: function(slips) {
-			$('#SlipData').html(slips);
-		}
-	});
-}
+
 
 //거래처 리스트 창 닫기
 function closeCustList() {
@@ -434,7 +463,12 @@ $(document).ready(function() {
 			var t = $(this).val();
 			searchCust(t);
 		}
-	})
+	});
+	$('#custSearchButton').click(function() {
+		var t = $('#custSearchbar').val();
+		searchCust(t);
+		
+	});
 	
 	//초기 달력설정
 	var tDay = new Date();
@@ -512,7 +546,9 @@ $(document).ready(function() {
 		}
 		var dd = td.text();
 		if(dd!=""){ //날짜부분 공란이면 date박스 변경하지 않음
-			var date = new Date(yy+"-"+mm+"-"+dd).toISOString().slice(0,10);
+			const offset = new Date().getTimezoneOffset()*60000;
+		
+			var date = new Date(new Date(yy+"-"+mm+"-"+dd)-offset).toISOString().slice(0,10);
 			$('.Slipdate').val(date);
 		}
 	});
@@ -553,11 +589,15 @@ $(document).ready(function() {
 		if($('#SlipData td[class="stk_name"][state="update"]').children('input[name="stk_code"]').val() != "" || $('#SlipData td[class="stk_code"][state="update"]').children('input[name="stk_code"]').val() != null){
 			$('#SlipData td[class="collect"][state="update"]').children('span').children('input[name="collect"]').attr('disabled','disabled');
 		}
+		if($('#SlipData td[class="collect"][state="update"]').children('span').children('input[name="collect"]').val() != "" || $('#SlipData td[class="collect"][state="update"]').children('span').children('input[name="collect"]').attr('readonly') != "readonly"){
+			$('#SlipData td[class="stk_name"][state="update"]').children('span').children('input[name="stk_name"]').attr('disabled','disabled');
+		}
 		td.children('span').children('input').select();
 	}
 	//전표 테이블 클릭시 해당 행 입력가능하게 수정 후 누른 부분을 포커스 
 	$(document).on('click','#SlipData td:nth-child(n+2)', function() {
 		updateSlipInput($(this));
+		calSales();
 	});
 	
 	$(document).on('click','.CustMgtListOverlay, .CustListExitBtn, .custListCancel', function () {
@@ -576,20 +616,30 @@ $(document).ready(function() {
 			closeAcctList();
 		}
 	});
-	
+//수량입력시 엔터
+	$(document).on('keyup','input[class="SlipInput"][name="quantity"]', function(e) {
+		if(e.keyCode== 13){
+			$('input[class="SlipInput"][name="price"]').select();
+		}
+	});
+//가격입력시 엔터, 포커스 아웃 하면 부가세 계산
 	$(document).on('keyup','input[class="SlipInput"][name="price"]', function(e) {
 		if(e.keyCode== 13){
 			calculateSlip();
+			$('input[class="SlipInput"][name="memo"]').select();
 		}
 	});
 	$(document).on('focusout','input[class="SlipInput"][name="price"]', function() {
-			calculateSlip();
-			
+		calculateSlip();
 	});
+
 	$(document).on('keyup','input[class="SlipInput"][name="collect"]', function(e) {
 		if(e.keyCode == 13){
 			CollectPop($(this));
 		}
+	});
+	$(document).on('click','#reset', function() {
+		selectSlips($('input[name="cust_code"]').val(),$('input[name="date"]').val());
 	});
 	$(document).on('keydown','input[class="SlipInput"][name="memo"]', function(e) {
 		var shiftTab = e.keyCode || e.which;
@@ -599,11 +649,13 @@ $(document).ready(function() {
 			}else {
 				if($(this).closest('tr').is(':last-child')){
 					SlipTableRowCreate();
+					calSales();
 					updateSlipInput($('#SlipData > tr:last-child > td[class="no"]'));
 				}else{
 					var index = $(this).closest('tr').index()+2;
 					var tds = $('#SlipData > tr:nth-child('+index+') > td[class="no"]');
 					updateSlipInput(tds);
+					calSales();
 				}	
 			}
 		}
@@ -623,30 +675,30 @@ $(document).ready(function() {
 	
 
 <div class="wrap">
-	<div class="SlipInsertTitle">전표입력</div>
+	<div class="SlipInsertTitle"><h3>전표입력</h3></div>
 	<div class="SlipHeader">
 		<div class="CustInfoContainer">
-			<div><tr>
-					<td colspan="2">거래처명 <input id="custSearchbar" type="text" name="custName" value=""><input type="button" value="찾기"></td>
-				</tr></div>
+			<div>
+				거래처명 <input id="custSearchbar" type="text" name="custName" value=""><input id="custSearchButton" type="button" value="찾기">
+				</div>
 			<table class="CustInfoTable">
 				<tr class="custName">
-					<td colspan="2"></td>
+					<td colspan="2">&nbsp;</td>
 				</tr>
 				<tr>
-					<td></td>
-					<td></td>
+					<td>&nbsp;</td>
+					<td>&nbsp;</td>
 				</tr>
 				<tr>
-					<td></td>
-					<td></td>
+					<td>&nbsp;</td>
+					<td>&nbsp;</td>
 				</tr>
 				<tr>
-					<td></td>
-					<td></td>
+					<td>&nbsp;</td>
+					<td>&nbsp;</td>
 				</tr>
 				<tr>
-					<td></td>
+					<td>메모</td>
 					<td colspan="2"></td>
 				</tr>
 			</table>
@@ -663,23 +715,23 @@ $(document).ready(function() {
 				<table class="SalesStateTable">
 					<tr>
 						<td>매출액</td>
-						<td>1000000</td>
+						<td id="sal"></td>
 					</tr>
 					<tr>
 						<td>부가세</td>
-						<td>1000000</td>
+						<td id="vat"></td>
 					</tr>
 					<tr>
 						<td>합계</td>
-						<td>24024024</td>
+						<td id="amt"></td>
 					</tr>
 					<tr>
 						<td>수금액</td>
-						<td>24020424</td>
+						<td id="col"></td>
 					</tr>
 					<tr>
 						<td>차액</td>
-						<td>24204204</td>
+						<td id="gap"></td>
 					</tr>
 				</table>
 			</div>
@@ -720,7 +772,7 @@ $(document).ready(function() {
 <!-- 타이틀,  -->
 <div class="SlipViewerContainer">
 	<div class="tableController">
-		<input type="button" value="행추가" onclick="SlipTableRowCreate()">
+		<input id="rowCreate" type="button" value="행추가" onclick="SlipTableRowCreate()">
 	</div>
 	<div>
 	<table id="SlipViewer">

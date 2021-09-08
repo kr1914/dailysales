@@ -14,6 +14,7 @@ import com.daily.dto.Stock;
 import com.daily.svc.AcctListView;
 import com.daily.svc.CustListView;
 import com.daily.svc.StkListView;
+import com.daily.svc.WrongMasageSend;
 
 public class AcctMgtListView implements Action {
 
@@ -30,19 +31,11 @@ public class AcctMgtListView implements Action {
 		session = request.getSession();
 		
 		if(session.getAttribute("Login")==null) {
-			response.setContentType("text/html;charset=UTF-8");
-			PrintWriter out = response.getWriter();
-			out.println("<script>");
-			out.println("alert('로그인이 필요합니다.')");
-			out.println("history.back();");
-			out.println("</script>");
+			WrongMasageSend wr = new WrongMasageSend();
+			wr.wrongAccess("로그인이 필요합니다.", response);
 		}else if(session.getAttribute("nowCo")== null){
-			response.setContentType("text/html;charset=UTF-8");
-			PrintWriter out = response.getWriter();
-			out.println("<script>");
-			out.println("alert('회사를 생성해주세요.')");
-			out.println("history.back();");
-			out.println("</script>");
+			WrongMasageSend wr = new WrongMasageSend();
+			wr.wrongAccess("회사를 생성해 주세요", response);
 		}else {
 		
 		adkey = (String)session.getAttribute("nowCo"); //현재 메인 회사

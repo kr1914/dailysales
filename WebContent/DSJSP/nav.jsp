@@ -216,15 +216,15 @@
        		 <div class="header_nav">
        	 		<ol>
 	        		<li id="introMenu" class="header_nav_icon" onclick="content.location.href=''">소개</li>
-	        		<li class="header_nav_icon" onclick="content.location.href=''">이용 가이드</li>
-	        		<li class="header_nav_icon" onclick="content.location.href='Board/Board.jsp'">커뮤니티</li>
+	        		<li class="header_nav_icon" onclick="content.location.href='Guide.do'">이용 가이드</li>
+	        		<li class="header_nav_icon" onclick="content.location.href='Board.do'">커뮤니티</li>
 	        		<li class="header_nav_icon" onclick="content.location.href=''">사이트맵</li>
         		</ol>
         	</div>
           <div id="header_login"></div>
         </div>
       </header>
-      <iframe class="" name="content" src="main.jsp" width="" height=""></iframe>
+      <iframe class="" name="content" src="main.do" width="" height=""></iframe>
     </div>
 
 	<div id="check"></div>

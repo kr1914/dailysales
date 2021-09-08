@@ -106,19 +106,7 @@ $(document).ready(function () {
   $('.popupLogin').fadeOut(0);
   var loginPage;
   $('#nav_login').click(function() {
-	  $.ajax({
-		  url:"loginJbox.jsp",
-		  dataType: "html",
-		  error: function() {
-			alert("에러");
-		},
-		  success : function(data) {
-			  loginPage = data;
-			$('body').append(loginPage);
-		}
-	  })
-	  $('.popupOverlay').fadeIn(350);
-      $('.popupLogin').fadeIn(350);
+	  loginPageOn();
   })
   
   	$(document).on('click','.popupOverlay, #loginCloseBtn, #createAccount', function() {
@@ -128,47 +116,59 @@ $(document).ready(function () {
     	$('.popupOverlay').delay(300).remove();
     	$('.popupLogin').delay(300).remove();
 	})
-})
+});
 
+//로그인창 오픈
+function loginPageOn() {
+	  $.ajax({
+		  url:"loginJbox.jsp",
+		  dataType: "html",
+		  error: function() {
+			alert("에러");
+		},
+		  success : function(data) {
+			$('body').append(data);
+		}
+	  })
+	  $('.popupOverlay').fadeIn(350);
+      $('.popupLogin').fadeIn(350);
+}
 
+//로그인 실행
+function loginDo() {
+	var getId = $("input[name='loginId']").val();
+	var getPwd = $("input[name='loginPwd']").val();
+	$.ajax({
+		url:"logintest.jsp",
+		type:'post',
+		data:{id:getId,pwd:getPwd},
+		error: function() {
+			alert("연결에 실패했습니다.");
+		},
+		success: function(a) {
+			if(a.indexOf("fail") != -1){
+				$('.input').css({
+					"border":" solid 2px #ff6a6a",
+				});
+				$('#wrongMassage').css('display','inline-block');
+				//로그인 페이지에  실패 메세지 등록
+			}else {
+		  		$('.popupOverlay').fadeOut(300);
+		    	$('.popupLogin').fadeOut(300);
+		    	
+		    	$('.popupOverlay').delay(300).remove();
+		    	$('.popupLogin').delay(300).remove();
+		    	location.reload();
+				//로그인 창을 닫고 메인페이지 화면 전환
+			}
+		}
+	});
+}
 
 
 //로그인 처리
 	$(document).on('click','.loginBtn', function() {
-		var getId = $("input[name='loginId']").val();
-		var getPwd = $("input[name='loginPwd']").val();
-		$.ajax({
-			url:"logintest.jsp",
-			type:'post',
-			data:{id:getId,pwd:getPwd},
-			error: function() {
-				alert("연결에 실패했습니다.");
-			},
-			success: function(a) {
-				if(a.indexOf("fail") != -1){
-					$('.input').css({
-						"border":" solid 2px #ff6a6a",
-					});
-					$('#wrongMassage').css('display','inline-block');
-					//로그인 페이지에  실패 메세지 등록
-				}else {
-			  		$('.popupOverlay').fadeOut(300);
-			    	$('.popupLogin').fadeOut(300);
-			    	
-			    	$('.popupOverlay').delay(300).remove();
-			    	$('.popupLogin').delay(300).remove();
-			    	location.reload();
-					//로그인 창을 닫고 메인페이지 화면 전환
-				}
-				
-			}
-
-		});
-		
-		
-
-		
-		
+		loginDo();
 	})
 
 
@@ -183,19 +183,20 @@ $(document).ready(function () {
 
 //화면 넓이에 따른 네비 보이는 유무
 function detectMediaSize() { 
-    if ( window.matchMedia('(min-width: 0px) and (max-width: 800px) and (max-height:1000px)').matches ) {
-    	$('nav').css('left','-200px');
+	var nav = $('nav');
+    if ( window.matchMedia('(min-width: 0px) and (max-width: 800px)').matches ) {
+    	nav.css('left','-200px');
     	$('.wrap').css('padding-left','0px');
-    	$('nav').css('height','1000px');
     } else {
-    	$('nav').css('left','0px');
+    	nav.css('left','0px');
     	$('.wrap').css('padding-left','200px');
-    	$('html').css('height','100%');
-    	$('body').css('height','100%');
-    	$('nav').css('height','100%');
-    	$('.wrap').css('height','95%');
-    	$('iframe').css('height','100%');
     }
+    var height = nav.css('height').replace('px');
+    if($(window).height()>height){
+    	nav.css('height',$(window).height()+"px");
+    }
+    
+    
 };
 
 // Register

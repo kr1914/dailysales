@@ -13,3 +13,8 @@
 	<link href="https://cdn.jsdelivr.net/gh/StephanWagner/jBox@v1.3.2/dist/jBox.all.min.css" rel="stylesheet">
 	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 	<script src="js/colResizable-1.5.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<!-- 	<script src="css-element-queries/src/ResizeSensor.js"></script>
+	<script src="css-element-queries/src/ElementQueries.js"></script> -->
+	<link  rel="stylesheet"  href="https://unpkg.com/swiper@7/swiper-bundle.min.css"/>
+	<script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script>

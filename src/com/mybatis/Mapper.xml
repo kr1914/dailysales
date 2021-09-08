@@ -14,13 +14,17 @@
 		select count(*) from manager where mgr_email='${id}' and mgr_key='${key}' and mgr_admin in ('A','B');
 	</select>
 	
+	<select id="myCoAdminCheck3" parameterType="map" resultType="int">
+		select count(*) from manager where mgr_email='${id}' and mgr_key='${key}' and mgr_admin='A';
+	</select>
+	
 	<!-- 회사 키값으로 회사정보 출력 -->
 	<select id="MyCoView" parameterType="map" resultType="com.daily.dto.MyCompany">
 	select * from company where admin_key='${key}';
 	</select>
   
   <!-- 로그인 -->
-   <select id="login" parameterType="map" resultType="Map">
+  <select id="login" parameterType="map" resultType="Map">
     select a.m_ide as 'id', a.m_name as 'name', b.mgr_key as 'key', b.co_name as 'company', 
     case b.mgr_admin 
     when "A" then "마스터"
@@ -151,8 +155,56 @@ on a.m_ide=b.mgr_email;
   <select id="acctSearchList" parameterType="map" resultType="map">
   select * from bank_account where admin_key='${adkey}' and ${option} like '%${keyword}%' ${sortOption};
   </select>
+  
+ <!-- 메인페이지 게시글 -->
+  <select id="mainPageArticles" resultType="map">
+  select bd_index, bd_title as 'article', date_format(bd_date,"%m-%d") as 'date' from board order by bd_index desc limit 0,6;
+  </select>
+  
+  <!-- 메인페이지 이용안내 -->
+  <select id="mainPageGuide" resultType="map">
+  select bd_index, bd_title as 'guide', date_format(bd_date,"%m-%d") as 'date' from board order by bd_index desc limit 0,6;
+  </select>
+  
+ <!-- 매출 차트 데이터 출력 -->
+ <select id="salesChartData" resultType="map" parameterType="String">
+ select date_format(tran_date, '%m-%d') as date, sum(sl_amount)/1000 as amount
+from (
+	SELECT tran_index, tran_date 
+	FROM transaction 
+	WHERE admin_key="${key}" 
+		and tran_cla="매출" 
+		and tran_date BETWEEN DATE_ADD(NOW(),INTERVAL -10 DAY ) AND NOW()
+		) tran 
+left join tran_slip as slip
+on slip.sl_tran = tran.tran_index
+where sl_sub=108
+group by tran_date;
+ </select>
+ 
+ 
+ <!-- 거래처 매출 순위 -->
+ <select id="salesCustChart" resultType="map" parameterType="String">
+select cust_name, sum(sl_amount)/1000 as amount
+from (select * 
+	from transaction 
+    where tran_cla="매출" and 
+    month(tran_date) = month(now()) and 
+    year(tran_date) = year(now())
+    and admin_key='${key}') tran
+left join (select * 
+	from tran_slip 
+    where sl_sub = 108) slip
+on slip.sl_tran=tran.tran_index
+left join customer
+on sl_cust = cust_code
+group by sl_cust 
+order by amount desc
+limit 0, 5;
+ </select>
 	  
   <!-- 거래 입력 -->
+  <!-- 새로입력 -->
   <insert id="insertTransaction" parameterType="map" >
   insert into transaction values(null, '${slipType}', '${date}', '${admin_key}');
   <selectKey keyProperty="lastid" resultType="Integer" order="AFTER">
@@ -170,10 +222,10 @@ on a.m_ide=b.mgr_email;
 		 	</when>
 		 	<when test="slipType != null and slipType == '수금'">
 		 		<choose>
-		 			<when test="type != null and type == '현금'"><!-- 101:현금 , 108:외상매출금 -->
+		 			<when test="type != null and type == '101'"><!-- 101:현금 , 108:외상매출금 -->
 						insert into tran_slip values(null, ${lastid}, 101, ${custcode}, ${collect}, '차변'),(null, ${lastid}, 108, ${custcode}, ${collect}, '대변');
 		 			</when>
-		 			<when test="type != null and type == '계좌'"><!-- 102:당좌예금 , 108:외상매출금 -->
+		 			<when test="type != null and type == '102'"><!-- 102:당좌예금 , 108:외상매출금 -->
 						insert into tran_slip values(null, ${lastid}, 102, ${custcode}, ${collect}, '차변'),(null, ${lastid}, 108, ${custcode}, ${collect}, '대변');
 		 			</when>
 		 		</choose>
@@ -191,8 +243,72 @@ on a.m_ide=b.mgr_email;
 			</choose>
 	</insert>
 	
-	<select id="selectSlipList" parameterType="map">
-	select tran_index, tran_cla, sl_cust, amount, vat, stk_code, stk_name, size, stk_vat, ta_acct, ta_amount, acct_name, sl_sub, cu
+	
+<!-- 수정 -->
+	<select id="vatCheck" parameterType="map" resultType="String">
+	select sl_amount from tran_slip where sl_tran=${tran_index} and sl_sub=255 and sl_cust=${custcode};
+	</select>
+	<update id="updateTrans" parameterType="map">
+		<choose>
+		 	<when test="slipType != null and slipType == '매출'">
+					update tran_slip set sl_amount=${total} where sl_tran=${tran_index} and sl_sub=108 and sl_cust =${custcode};
+					update tran_slip set sl_amount=${amount} where sl_tran=${tran_index} and sl_sub=412 and sl_cust =${custcode};
+			   <if test='vat != null and vat != ""'>
+			   		update tran_slip set sl_amount=${vat} where sl_tran=45 and sl_sub=255 and sl_cust=${custcode};
+			   </if>
+		 	</when>
+		 	<when test="slipType != null and slipType == '수금'">
+		 		<choose>
+		 			<when test="type != null and type == '101'"><!-- 101:현금 , 108:외상매출금 -->
+		 				update tran_slip set sl_amount=${collect}, sl_sub=101 where sl_tran=${tran_index} and sl_cust =${custcode} and sl_cla='차변';
+		 				update tran_slip set sl_amount=${collect} where sl_tran=${tran_index} and sl_sub=108 and sl_cust =${custcode};
+		 			</when>
+		 			<when test="type != null and type == '102'"><!-- 102:당좌예금 , 108:외상매출금 -->
+						update tran_slip set sl_amount=${collect}, sl_sub=102 where sl_tran=${tran_index} and sl_cust =${custcode} and sl_cla='차변';
+		 				update tran_slip set sl_amount=${collect} where sl_tran=${tran_index} and sl_sub=108 and sl_cust =${custcode};
+		 			</when>
+		 		</choose>
+		 	</when>
+		</choose>
+	</update>
+		<update id="updateTransAndVat" parameterType="map">
+		<choose>
+		 	<when test="slipType != null and slipType == '매출'">
+					update tran_slip set sl_amount=${total} where sl_tran=${tran_index} and sl_sub=108 and sl_cust =${custcode};
+					update tran_slip set sl_amount=${amount} where sl_tran=${tran_index} and sl_sub=412 and sl_cust =${custcode};
+			   <if test='vat != null and vat != ""'>
+		   			insert into tran_slip values(null, ${lastid}, 255, ${custcode}, ${vat}, '대변');
+			   </if>
+		 	</when>
+		 	<when test="slipType != null and slipType == '수금'">
+		 		<choose>
+		 			<when test="type != null and type == '101'"><!-- 101:현금 , 108:외상매출금 -->
+		 				update tran_slip set sl_amount=${collect}, sl_sub=101 where sl_tran=${tran_index} and sl_cust =${custcode} and sl_cla='차변';
+		 				update tran_slip set sl_amount=${collect} where sl_tran=${tran_index} and sl_sub=108 and sl_cust =${custcode};
+		 			</when>
+		 			<when test="type != null and type == '102'"><!-- 102:당좌예금 , 108:외상매출금 -->
+						update tran_slip set sl_amount=${collect}, sl_sub=102 where sl_tran=${tran_index} and sl_cust =${custcode} and sl_cla='차변';
+		 				update tran_slip set sl_amount=${collect} where sl_tran=${tran_index} and sl_sub=108 and sl_cust =${custcode};
+		 			</when>
+		 		</choose>
+		 	</when>
+		</choose>
+	</update>
+	<update id="updateTransBook" parameterType="map">
+			<choose>
+			 	<when test="slipType != null and slipType == '매출'">
+			 		update tran_stk set ts_stk=${stkcode}, ts_quantity=${quantity}, ts_price=${price} where ts_tran=${tran_index};
+			 	</when>
+			 	<when test="slipType != null and slipType == '수금'">
+			 		update tran_acct set ta_acct=${acct_code}, ta_amount=${collect} where ta_tran=${tran_index};
+			 	</when>
+			</choose>
+	</update>
+	
+	
+	
+	<select id="selectSlipList" parameterType="map" resultType="map">
+	select tran_index, tran_cla, sl_cust, amount, vat, stk_code, stk_name, size, ts_quantity, ts_price, stk_vat, ta_acct, ta_amount, acct_name, sl_sub, cu
 from (select tran_index, tran_cla
 	from transaction
 	where tran_date = '${date}' and admin_key = '${admin_key}') tran

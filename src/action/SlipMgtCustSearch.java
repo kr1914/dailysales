@@ -1,5 +1,6 @@
 package action;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
@@ -27,19 +28,9 @@ public class SlipMgtCustSearch implements Action {
 		session = request.getSession();
 		
 		if(session.getAttribute("Login")==null) {
-			response.setContentType("text/html;charset=UTF-8");
-			PrintWriter out = response.getWriter();
-			out.println("<script>");
-			out.println("alert('로그인이 필요합니다.')");
-			out.println("history.back();");
-			out.println("</script>");
+			wrongAccess("로그인이 필요합니다.", response);
 		}else if(session.getAttribute("nowCo")== null){
-			response.setContentType("text/html;charset=UTF-8");
-			PrintWriter out = response.getWriter();
-			out.println("<script>");
-			out.println("alert('회사를 생성해주세요.')");
-			out.println("history.back();");
-			out.println("</script>");
+			wrongAccess("회사 정보를 찾을 수 없습니다.", response);
 		}else {
 		
 		set = new HashMap<String, String>();
@@ -66,15 +57,26 @@ public class SlipMgtCustSearch implements Action {
 			forward = new ActionForward();
 			forward.setPath("SlipOneCustData.jsp");
 		}else if(custList.size()>1) {
+			request.setAttribute("size", custList.size());
 			session.setAttribute("custlist", custList);
 			forward = new ActionForward();
-			forward.setPath("SlipCustListData.jsp");
+			forward.setPath("SlipMultiCustData.jsp");
 		}
 		
 	
 		}
 		
 		return forward;
+	}
+	
+	public void wrongAccess(String word, HttpServletResponse response) throws IOException {
+		response.setContentType("text/html;charset=UTF-8");
+		PrintWriter out = response.getWriter();
+		out.println("<script>");
+		out.println("alert('"+word+"');");
+		out.println("history.back();");
+		out.println("</script>");
+		out.flush();
 	}
 	
 }

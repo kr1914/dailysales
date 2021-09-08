@@ -15,6 +15,7 @@ import com.daily.svc.AcctInsertIntoDB;
 import com.daily.svc.AdminCheck;
 import com.daily.svc.CustInsertIntoDB;
 import com.daily.svc.StkInsertIntoDB;
+import com.daily.svc.WrongMasageSend;
 
 public class AcctMgtInsert implements Action {
 
@@ -36,19 +37,11 @@ public class AcctMgtInsert implements Action {
 		
 		//로그인, 회사, 권한 체크
 		if(session.getAttribute("Login")==null) {
-			response.setContentType("text/html;charset=UTF-8");
-			PrintWriter out = response.getWriter();
-			out.println("<script>");
-			out.println("alert('로그인이 필요합니다.')");
-			out.println("history.back();");
-			out.println("</script>");
+			WrongMasageSend wr = new WrongMasageSend();
+			wr.wrongAccess("로그인이 필요합니다.", response);
 		}else if(session.getAttribute("nowCo")== null){
-			response.setContentType("text/html;charset=UTF-8");
-			PrintWriter out = response.getWriter();
-			out.println("<script>");
-			out.println("alert('회사를 생성해주세요.')");
-			out.println("history.back();");
-			out.println("</script>");
+			WrongMasageSend wr = new WrongMasageSend();
+			wr.wrongAccess("회사 정보를 찾을 수 없습니다.", response);
 		}else {
 			admin = AdminCheck.getInstance();
 			
@@ -61,12 +54,8 @@ public class AcctMgtInsert implements Action {
 			}
 			
 			if(!admin.myCoCheckManager(callCo)) {
-				response.setContentType("text/html;charset=UTF-8");
-				PrintWriter out = response.getWriter();
-				out.println("<script>");
-				out.println("alert('권한이 부족합니다.')");
-				out.println("history.back();");
-				out.println("</script>");
+				WrongMasageSend wr = new WrongMasageSend();
+				wr.wrongAccess("권한이 부족합니다.", response);
 			}else {
 				
 			}
@@ -84,12 +73,8 @@ public class AcctMgtInsert implements Action {
 		
 		AcctInsertIntoDB insert = new AcctInsertIntoDB();
 		if(!insert.excute(acct)) {
-			response.setContentType("text/html;charset=UTF-8");
-			PrintWriter out = response.getWriter();
-			out.println("<script>");
-			out.println("alert('업로드 실패')");
-			out.println("history.back();");
-			out.println("</script>");
+			WrongMasageSend wr = new WrongMasageSend();
+			wr.wrongAccess("업로드 실패", response);
 		}else {
 			forward = new ActionForward();
 			forward.setPath("AcctMgtListView.do");

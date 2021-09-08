@@ -11,13 +11,13 @@ import javax.servlet.http.HttpSession;
 import com.daily.dto.ActionForward;
 import com.daily.dto.Customer;
 import com.daily.svc.CustListView;
+import com.daily.svc.WrongMasageSend;
 
 public class CustMgtListView implements Action {
 
 	
 	ActionForward forward;
 	HttpSession session;
-	Customer cs;
 	String adkey ="";
 	CustListView clv;
 	List<Map<String, Object>> custList = null;
@@ -27,20 +27,12 @@ public class CustMgtListView implements Action {
 		
 		session = request.getSession();
 		
-		if(session.getAttribute("Login")==null) {
-			response.setContentType("text/html;charset=UTF-8");
-			PrintWriter out = response.getWriter();
-			out.println("<script>");
-			out.println("alert('로그인이 필요합니다.')");
-			out.println("history.back();");
-			out.println("</script>");
-		}else if(session.getAttribute("nowCo")== null){
-			response.setContentType("text/html;charset=UTF-8");
-			PrintWriter out = response.getWriter();
-			out.println("<script>");
-			out.println("alert('회사를 생성해주세요.')");
-			out.println("history.back();");
-			out.println("</script>");
+		if(session.getAttribute("Login")==null) { //로그인 유무
+			WrongMasageSend wr = new WrongMasageSend();
+			wr.wrongAccess("로그인이 필요합니다.", response);
+		}else if(session.getAttribute("nowCo")== null){ //회사 존재유무
+			WrongMasageSend wr = new WrongMasageSend();
+			wr.wrongAccess("회사 정보를 찾을 수 없습니다.", response);
 		}else {
 		
 		adkey = (String)session.getAttribute("nowCo"); //현재 메인 회사
@@ -53,11 +45,6 @@ public class CustMgtListView implements Action {
 		forward = new ActionForward();
 		forward.setPath("CustMgtList.jsp");
 		}
-		
-		
-		
-	
-		
 		return forward;
 	}
 

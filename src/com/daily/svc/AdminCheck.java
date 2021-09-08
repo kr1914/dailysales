@@ -20,62 +20,48 @@ public class AdminCheck {
 	}
 	
 	public boolean myCoCheckAdminFree(Map<String, Object> co) {
-		
 		try {
 			dba = DbAcesse.getInstance();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		int check = dba.myCoCheckAdminFree(co);
-		
 		if(check > 0) {
 			result = true;
 		}else {
 			result = false;
 		}
-		
 		return result;
 	}
-	
 	public boolean myCoCheckManager(Map<String, Object> co) {
-		
 		try {
 			dba = DbAcesse.getInstance();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		int check = dba.myCoCheckManager(co);
-		
 		if(check > 0) {
 			result = true;
 		}else {
 			result = false;
 		}
-		
 		return result;
 	}
-	
 	public boolean myCoCheckMasterOnly(Map<String, Object> co) {
-		
 		try {
 			dba = DbAcesse.getInstance();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		int check = dba.myCoCheckMasterOnly(co);
-		
 		if(check > 0) {
 			result = true;
 		}else {
 			result = false;
 		}
-		
 		return result;
 	}
 }

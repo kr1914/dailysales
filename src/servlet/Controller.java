@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.daily.dto.ActionForward;
 
@@ -23,6 +24,7 @@ import action.CustMgtListView;
 import action.CustMgtModify;
 import action.CustMgtSearch;
 import action.CustMgtView;
+import action.MainPage;
 import action.MyCoChange;
 import action.MyCoInsert;
 import action.MyCoModify;
@@ -335,7 +337,47 @@ public class Controller extends javax.servlet.http.HttpServlet {
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
+	}else if(command.equals("/DSJSP/CustMgt/CustSearchData.do")) {
+		forward=new ActionForward();
+		forward.setPath("CustSearchData.jsp");
+		forward.setRedirect(true);
+	}else if(command.equals("/DSJSP/main.do")) {
+		HttpSession session;
+		session = request.getSession();
+		if(session.getAttribute("Login")==null) {
+			forward=new ActionForward();
+			forward.setPath("index.jsp");
+			forward.setRedirect(true);
+		}else {
+		action = new MainPage();
+		try {
+			forward = action.execute(request, response);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		}
+	}else if(command.equals("/DSJSP/Guide.do")) {
+		forward=new ActionForward();
+		forward.setPath("Board/Guide.jsp");
+		forward.setRedirect(true);
+	}else if(command.equals("/DSJSP/Board.do")) {
+		forward=new ActionForward();
+		forward.setPath("Board/Board.jsp");
+		forward.setRedirect(true);
+	}else if(command.equals("/DSJSP/Board/WriteGuide.do")) {
+		forward=new ActionForward();
+		forward.setPath("WriteGuide.jsp");
+		forward.setRedirect(true);
+	}else if(command.equals("/DSJSP/Board/WriteGuide.do")) {
+		forward=new ActionForward();
+		forward.setPath("WriteGuide.jsp");
+		forward.setRedirect(true);
+	}else if(command.equals("/DSJSP/index.do")) {
+		forward=new ActionForward();
+		forward.setPath("DSJSP/nav.jsp");
+		forward.setRedirect(true);
 	}
+	
 	
 	
 	
@@ -356,7 +398,7 @@ public class Controller extends javax.servlet.http.HttpServlet {
 				response.sendRedirect(forward.getPath());
 			}else{
 				RequestDispatcher dispatcher=
-						request.getRequestDispatcher(forward.getPath());
+				request.getRequestDispatcher(forward.getPath());
 				dispatcher.forward(request, response);
 			}
 			

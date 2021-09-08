@@ -18,6 +18,7 @@ import com.daily.dto.SalesSlip;
 import com.daily.svc.AcctListView;
 import com.daily.svc.AdminCheck;
 import com.daily.svc.SlipMgtInsertSlip;
+import com.daily.svc.SlipMgtModifyInDB;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -39,33 +40,23 @@ public class SlipMgtsaveSlip implements Action {
 	@Override
 	public ActionForward execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		session = request.getSession();
-		
 		ParseListFromJson(request); // json파일 -> list<hashmap>으로 변경
-		
-	    System.out.println(slip.get(0));
-	    
-	    
 		if(session.getAttribute("Login")==null) {
 			wrongAccess("로그인이 필요합니다.", response);
 		}else {
 			admin = AdminCheck.getInstance();
-			
-			login = (List<Map<String, Object>>)session.getAttribute("Login");
-			String key = (String)session.getAttribute("nowCo");
-			for(Map<String, Object> t : login) {
-				if(t.get("key").equals(key)) {
-					callCo = t;// id, name, company, admin, key
+			login = (List<Map<String, Object>>)session.getAttribute("Login"); //로그인 세션
+			adkey = (String)session.getAttribute("nowCo"); //현재 작업중인 회사 admin_key
+			for(Map<String, Object> t : login) {  
+				if(t.get("key").equals(adkey)) {
+					callCo = t;// id, name, company, admin, key //회사 정보 추출
 				}
 			}
-			
 			if(!admin.myCoCheckManager(callCo)) { //매니저 권한 확인
 				wrongAccess("권한이 부족합니다.", response);
 			}else {
-				
-			
-			
-			adkey = (String)session.getAttribute("nowCo"); //현재 메인 회사
-			SlipMgtInsertSlip smis = new SlipMgtInsertSlip();
+			SlipMgtInsertSlip smis = new SlipMgtInsertSlip(); //입력
+			SlipMgtModifyInDB smmf = new SlipMgtModifyInDB(); //수정
 			for(HashMap<String, String> sl : slip) {
 				sl.put("admin_key", adkey);
 				String amount = sl.get("amount");
@@ -77,25 +68,24 @@ public class SlipMgtsaveSlip implements Action {
 				}else if(!vat.equals("")) {
 					sl.put("total", Integer.toString(Integer.parseInt(sl.get("vat"))));
 				}
-			if(sl.get("tran_index").equals("")) { //새로입력
+			if(sl.get("tran_index").equals("") || sl.get("tran_index") == null) { //새로입력
 				
 				smis.excute(sl);
 			
 			}else { //수정
-				
-				
-			}
-			
-			}
-			
-			
-	
-			
-			
-			}
+				smmf.excute(sl);
+			}			}			}
 		}
+//저장 후 계속 작업을 위한 전송
+		String code = slip.get(0).get("custcode");
+		String date = slip.get(0).get("date");
+		request.setAttribute("custcode", code);
+		request.setAttribute("date", date);
+		
+		forward = new ActionForward();
+		forward.setPath("selectSlip.do");
 
-		return null;
+		return forward;
 	}
 //ArrayJson 에서 List<Map>으로 변환
 	public void ParseListFromJson(HttpServletRequest request) {
