@@ -18,6 +18,7 @@ import action.AcctMgtModify;
 import action.AcctMgtSearch;
 import action.AcctMgtView;
 import action.Action;
+import action.CrtMgtCodeSend;
 import action.CustMgtDelete;
 import action.CustMgtInsert;
 import action.CustMgtListView;
@@ -36,10 +37,12 @@ import action.SlipMgtCustListPop;
 import action.SlipMgtCustModify;
 import action.SlipMgtCustSearch;
 import action.SlipMgtCustView;
+import action.SlipMgtDelete;
 import action.SlipMgtStkListPop;
 import action.SlipMgtStkListSearch;
 import action.SlipMgtStkSearch;
 import action.SlipMgtStkSelectOne;
+import action.SlipMgtSubListPop;
 import action.StkMgtDelete;
 import action.StkMgtInsert;
 import action.StkMgtListView;
@@ -48,6 +51,8 @@ import action.StkMgtSearch;
 import action.StkMgtView;
 import action.SlipMgtsaveSlip;
 import action.SlipMgtselectSlips;
+import action.SlipMgtselectSub;
+import action.SlipTabChange;
 
 @WebServlet("*.do")
 public class Controller extends javax.servlet.http.HttpServlet {
@@ -360,6 +365,10 @@ public class Controller extends javax.servlet.http.HttpServlet {
 		forward=new ActionForward();
 		forward.setPath("Board/Guide.jsp");
 		forward.setRedirect(true);
+	}else if(command.equals("/DSJSP/intro.do")) {
+		forward=new ActionForward();
+		forward.setPath("intro.jsp");
+		forward.setRedirect(true);
 	}else if(command.equals("/DSJSP/Board.do")) {
 		forward=new ActionForward();
 		forward.setPath("Board/Board.jsp");
@@ -376,7 +385,43 @@ public class Controller extends javax.servlet.http.HttpServlet {
 		forward=new ActionForward();
 		forward.setPath("DSJSP/nav.jsp");
 		forward.setRedirect(true);
+	}else if(command.equals("/DSJSP/Slip/changTab.do")) {
+		action = new SlipTabChange();
+		try {
+			forward = action.execute(request, response);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}else if(command.equals("/DSJSP/Slip/SlipDelete.do")) {
+		action = new SlipMgtDelete();
+		try {
+			forward = action.execute(request, response);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}else if(command.equals("/DSJSP/Slip/subPopup.do")) {
+		action = new SlipMgtselectSub();
+		try {
+			forward = action.execute(request, response);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}else if(command.equals("/DSJSP/Slip/SlectSubPop.do")) {
+		action = new SlipMgtSubListPop();
+		try {
+			forward = action.execute(request, response);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}else if(command.equals("/DSJSP/codeSend.do")) {
+		action = new CrtMgtCodeSend();
+		try {
+			forward = action.execute(request, response);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
+	
 	
 	
 	

@@ -10,4 +10,5 @@
 var t1 = "<%=stk.getStk_code()%>";
 var t2 = "<%=stk.getStk_name()%>";
 var t3 = "<%=stk.getStk_vat()%>";
+var t4 = "<%=stk.getStk_size1()%>/<%=stk.getStk_size2()%>"
 </script>

@@ -12,14 +12,17 @@ import com.daily.dto.Stock;
 
 public class SlipMgtModifyInDB {
 	boolean r = false;
-
+	int result;
 	
 	public boolean excute(HashMap<String, String> sl) throws IOException {
 		
 		DbAcesse dba = DbAcesse.getInstance();
 		
-		int result = dba.modifyTransaction(sl);
-
+		if(sl.get("slipType").equals("매출") || sl.get("slipType").equals("수금")) {
+			result = dba.modifyTransaction(sl);
+		}else if(sl.get("slipType").equals("매입") || sl.get("slipType").equals("지출")) {
+			result = dba.modifyPurcharse(sl);
+		}
 		if(result > 0) {
 			dba.commit();
 			r = true;

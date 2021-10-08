@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -89,7 +90,7 @@ public class MyCoInsert implements Action {
 		//생성시 방금 만든 계정 정보를 세션에 업데이트
 		List<Map<String, Object>> update = (List<Map<String, Object>>)session.getAttribute("Login");
 		
-		Map<String, Object> newCo = null;
+		Map<String, Object> newCo = new HashMap<String, Object>();
 		newCo.put("key", key);
 		newCo.put("company", CrtCo.getCo_name());
 		newCo.put("grade", mgr.getMgr_admin());

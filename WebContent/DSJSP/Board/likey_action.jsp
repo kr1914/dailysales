@@ -2,7 +2,7 @@
     pageEncoding="EUC-KR"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
-
+<% %>
 <% String id = (String)session.getAttribute("ID"); %>
 <% String article = request.getParameter("bd_index"); %>
 

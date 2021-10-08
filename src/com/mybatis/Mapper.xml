@@ -5,7 +5,6 @@
 <mapper namespace="org.mybatis.example.BlogMapper">
 
 	<!-- 세션아이디와 회사 키값 확인 -->
-	
 	<select id="myCoAdminCheck1" parameterType="map" resultType="int">
 		select count(*) from manager where mgr_email='${id}' and mgr_key='${key}' and mgr_admin in ('A','B','C');
 	</select>
@@ -39,6 +38,40 @@ on a.m_ide=b.mgr_email;
   <select id="duplCheck" parameterType="String" resultType="boolean">
   	select if(count(*)=1,1,0) from member where m_ide='${id}';
   </select>
+  
+  <!-- 게시판 -->
+  <!-- 자유게시판 -->
+<select id="boardSelect" resultType="map">
+select bd_index, bd_header, bd_title, bd_creator, bd_date, bd_view, ifnull(lk,0) lk from board left join (select distinct like_article, sum(like_state) lk from likey group by like_article) b on board.bd_index = b.like_article where bd_header not in ('이용가이드') order by bd_index desc;
+</select>  
+<select id="guideSelect" resultType="map">
+select bd_index, bd_header, bd_title, bd_creator, bd_date, bd_view, ifnull(lk,0) lk from (select * from board where bd_header not in ("자유글", "공지사항","문의사항")) board left join (select distinct like_article, sum(like_state) lk from likey group by like_article) b on board.bd_index = b.like_article order by bd_index desc;
+</select>
+	<!-- 게시글 삭제 -->
+	<delete id="deleteArticle" parameterType="String">
+	delete from board where bd_index=${index};
+	</delete>
+	<!-- 게시글 정보조회 -->
+	<select id="selectArticle" parameterType="String" resultType="com.daily.dto.Article">
+	select * from board where bd_index=${index};
+	</select>
+	<!-- 게시글 조회수 +1-->
+	<update id="viewArticle" parameterType="String">
+	update board set bd_view = bd_view+1 where bd_index=${index};
+	</update>
+	<!-- 게시글 좋아요 확인 -->
+	<select id="checkLikey" parameterType="map" resultType="map">
+	select count(*) count, like_state from likey where like_article=${index} and like_email='${ID}';
+	</select>
+	<!-- 게시글 수정 -->
+	<update id="updateArticle">
+	update board set bd_header='${bd_header}', bd_title='${bd_title}', bd_article='${bd_article}', bd_date=${bd_date} where bd_index=${bd_index};
+	</update>
+	<!-- 게시글 작성 -->
+	<insert id="writeArticle" parameterType="com.daily.dto.Article">
+	insert into board(bd_creator, bd_header, bd_title, bd_article, bd_date) values(
+'${bd_creator}','${bd_header}','${bd_title}','${bd_article}','${bd_date}');
+	</insert>
   
   <!-- 회사 생성 -->
   <insert id="MyCoInsert" parameterType="com.daily.dto.MyCompany">
@@ -206,7 +239,7 @@ limit 0, 5;
   <!-- 거래 입력 -->
   <!-- 새로입력 -->
   <insert id="insertTransaction" parameterType="map" >
-  insert into transaction values(null, '${slipType}', '${date}', '${admin_key}');
+  insert into transaction values(null, '${slipType}', '${date}', '${admin_key}', '${memo}');
   <selectKey keyProperty="lastid" resultType="Integer" order="AFTER">
   select last_insert_id();
   </selectKey>
@@ -305,8 +338,69 @@ limit 0, 5;
 			</choose>
 	</update>
 	
+<!-- 수정 -->
+	<select id="vatCheckPur" parameterType="map" resultType="String">
+	select sl_amount from tran_slip where sl_tran=${tran_index} and sl_sub=135 and sl_cust=${custcode};
+	</select>
+	<update id="updateTransPur" parameterType="map">
+		<choose>
+		 	<when test="slipType != null and slipType == '매입'"><!-- 460:매입 ,  251: 외상매입금, 135:부가세 대급금 -->
+					update tran_slip set sl_amount=${total} where sl_tran=${tran_index} and sl_sub=251 and sl_cust =${custcode};
+					update tran_slip set sl_amount=${amount} where sl_tran=${tran_index} and sl_sub=460 and sl_cust =${custcode};
+			   <if test='vat != null and vat != ""'>
+			   		update tran_slip set sl_amount=${vat} where sl_tran=45 and sl_sub=135 and sl_cust=${custcode};
+			   </if>
+		 	</when>
+		 	<when test="slipType != null and slipType == '지출'">
+		 		<choose>
+		 			<when test="type != null and type == '101'"><!-- 101:현금 , 108:외상매출금 -->
+		 				update tran_slip set sl_amount=${collect}, sl_sub=101 where sl_tran=${tran_index} and sl_cust =${custcode} and sl_cla='대변';
+		 				update tran_slip set sl_amount=${collect} where sl_tran=${tran_index} and sl_sub=108 and sl_cust =${custcode};
+		 			</when>
+		 			<when test="type != null and type == '102'"><!-- 102:당좌예금 , 108:외상매출금 -->
+						update tran_slip set sl_amount=${collect}, sl_sub=102 where sl_tran=${tran_index} and sl_cust =${custcode} and sl_cla='대변';
+		 				update tran_slip set sl_amount=${collect} where sl_tran=${tran_index} and sl_sub=108 and sl_cust =${custcode};
+		 			</when>
+		 		</choose>
+		 	</when>
+		</choose>
+	</update>
+		<update id="updateTransAndVatPur" parameterType="map">
+		<choose>
+		 	<when test="slipType != null and slipType == '매출'"><!-- 460:매입 ,  251: 외상매입금, 135:부가세 대급금 -->
+					update tran_slip set sl_amount=${total} where sl_tran=${tran_index} and sl_sub=251 and sl_cust =${custcode};
+					update tran_slip set sl_amount=${amount} where sl_tran=${tran_index} and sl_sub=460 and sl_cust =${custcode};
+			   <if test='vat != null and vat != ""'>
+		   			insert into tran_slip values(null, ${lastid}, 135, ${custcode}, ${vat}, '대변');
+			   </if>
+		 	</when>
+		 	<when test="slipType != null and slipType == '수금'">
+		 		<choose>
+		 			<when test="type != null and type == '101'"><!-- 101:현금 , 108:외상매출금 -->
+		 				update tran_slip set sl_amount=${collect}, sl_sub=101 where sl_tran=${tran_index} and sl_cust =${custcode} and sl_cla='대변';
+		 				update tran_slip set sl_amount=${collect} where sl_tran=${tran_index} and sl_sub=251 and sl_cust =${custcode};
+		 			</when>
+		 			<when test="type != null and type == '102'"><!-- 102:당좌예금 , 108:외상매출금 -->
+						update tran_slip set sl_amount=${collect}, sl_sub=102 where sl_tran=${tran_index} and sl_cust =${custcode} and sl_cla='대변';
+		 				update tran_slip set sl_amount=${collect} where sl_tran=${tran_index} and sl_sub=251 and sl_cust =${custcode};
+		 			</when>
+		 		</choose>
+		 	</when>
+		</choose>
+	</update>
+	<update id="updateTransBookPur" parameterType="map">
+			<choose>
+			 	<when test="slipType != null and slipType == '매입'">
+			 		update tran_stk set ts_stk=${stkcode}, ts_quantity=${quantity}, ts_price=${price} where ts_tran=${tran_index};
+			 	</when>
+			 	<when test="slipType != null and slipType == '지출'">
+			 		update tran_acct set ta_acct=${acct_code}, ta_amount=${collect} where ta_tran=${tran_index};
+			 	</when>
+			</choose>
+	</update>
 	
 	
+		<!-- 매출전표 조회 -->
 	<select id="selectSlipList" parameterType="map" resultType="map">
 	select tran_index, tran_cla, sl_cust, amount, vat, stk_code, stk_name, size, ts_quantity, ts_price, stk_vat, ta_acct, ta_amount, acct_name, sl_sub, cu
 from (select tran_index, tran_cla
@@ -335,4 +429,87 @@ on tran.tran_index = accts.sl_tran
 where sl_cust = ${custcode} or cu = ${custcode}
 order by tran_index;
 	</select>
+	<!-- 매입전표 조회 -->
+		<select id="selectSlipListPurcharse" parameterType="map" resultType="map">
+	select tran_index, tran_cla, sl_cust, amount, vat, stk_code, stk_name, size, ts_quantity, ts_price, stk_vat, ta_acct, ta_amount*-1 ta_amount, acct_name, sl_sub, cu
+from (select tran_index, tran_cla
+	from transaction
+	where tran_date = '${date}' and admin_key = '${admin_key}') tran
+left join (select sl_tran, sl_amount amount, sl_cust
+		from tran_slip
+		where sl_sub = 460 and sl_cla='차변') sal
+on tran.tran_index = sal.sl_tran
+left join (select sl_tran, sl_amount vat
+		from tran_slip
+		where sl_sub = 135 and sl_cla='차변') vat
+on tran.tran_index = vat.sl_tran
+left join (select ts_tran, stk_code, ts_quantity, ts_price, stk_name, concat(stk_size1,"/",stk_size2) size, stk_vat
+			from tran_stk
+			left join stock on ts_stk = stk_code) stk
+on tran.tran_index = stk.ts_tran
+left join (select ta_tran, ta_acct, ta_amount, acct_name
+			from tran_acct
+			left join bank_account on ta_acct = acct_code) acct
+on tran.tran_index = acct.ta_tran
+left join (select sl_tran, sl_sub, sl_amount, sl_cust cu
+			from tran_slip
+			where sl_sub in (101, 102) and sl_cla = "대변") accts
+on tran.tran_index = accts.sl_tran
+where sl_cust = ${custcode} or cu = ${custcode}
+order by tran_index;
+	</select>
+	
+	  <!-- 새로입력 -->
+  <insert id="insertPurcharse" parameterType="map" >
+  insert into transaction values(null, '${slipType}', '${date}', '${admin_key}', '${memo}');
+  <selectKey keyProperty="lastid" resultType="Integer" order="AFTER">
+  select last_insert_id();
+  </selectKey>
+  </insert>
+  <insert id="insertTransPurcharse" parameterType="map">
+		<choose>
+		 	<when test="slipType != null and slipType == '매입'"><!-- 460:매입 ,  251: 외상매입금, 135:부가세 대급금 -->
+					insert into tran_slip values(null, ${lastid}, 251, ${custcode}, ${total}, '대변'),(null, ${lastid}, 460, ${custcode}, ${amount}, '차변')
+			   <if test='vat != null and vat != ""'>
+					,(null, ${lastid}, 135, ${custcode}, ${vat}, '차변')
+			   </if>
+			   ;
+		 	</when>
+		 	<when test="slipType != null and slipType == '지출'">
+		 		<choose>
+		 			<when test="type != null and type == '101'"><!-- 101:현금 , 251:외상매입금 -->
+						insert into tran_slip values(null, ${lastid}, 101, ${custcode}, ${collect}, '대변'),(null, ${lastid}, 108, ${custcode}, ${collect}, '차변');
+		 			</when>
+		 			<when test="type != null and type == '102'"><!-- 102:당좌예금 , 251:외상매입금 -->
+						insert into tran_slip values(null, ${lastid}, 102, ${custcode}, ${collect}, '대변'),(null, ${lastid}, 108, ${custcode}, ${collect}, '차변');
+		 			</when>
+		 		</choose>
+		 	</when>
+		</choose>
+	</insert>
+	<insert id="insertTransBookPurcharse" parameterType="map">
+			<choose>
+			 	<when test="slipType != null and slipType == '매입'">
+					insert into tran_stk values(null, ${lastid}, ${stkcode}, ${quantity}, ${price});
+			 	</when>
+			 	<when test="slipType != null and slipType == '지출'">
+					insert into tran_acct values(null, ${lastid}, ${acct_code}, -${collect});
+			 	</when>
+			</choose>
+	</insert>
+	
+	<!-- 전표 삭제 -->
+	
+	<delete id="deleteTran" parameterType="map">
+	delete from transaction where admin_key='${admin_key}' and tran_index=${index};
+	delete from tran_slip where sl_tran=${index};
+	delete from tran_stk where ts_tran=${index};
+	delete from tran_acct where ta_tran=${index};
+	</delete>
+	
+	<select id="selectSubject" parameterType="String" resultType="map">
+	select * from (select * from acct_subject where sub_code > 500) acc_subject where sub_name like '%${key}%';
+	</select>
+	
+	
 </mapper>

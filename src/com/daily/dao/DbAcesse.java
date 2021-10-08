@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
+import com.daily.dto.Article;
 import com.daily.dto.BankAccount;
 import com.daily.dto.Customer;
 import com.daily.dto.Manager;
@@ -40,6 +41,7 @@ public class DbAcesse {
 	
 	List<Map<String, Object>> check = null;
 	List<HashMap<String, Object>> slips = null;
+	Map<String, Object> mapdata = null;
 	int result;
 	Boolean dupl;
 	MyCompany coInfo;
@@ -47,6 +49,7 @@ public class DbAcesse {
 	Stock stkInfo;
 	BankAccount acctInfo;
 	SalesSlip sales;
+	Article article;
 	
 	
 	public List<Map<String, Object>> login (String id, String pwd){
@@ -54,7 +57,6 @@ public class DbAcesse {
 		userData.put("id", id);
 		userData.put("pwd", pwd);
 		check = session.selectList("login", userData);
-		
 		return check;
 	}
 //아이디 중복확인
@@ -249,6 +251,20 @@ public class DbAcesse {
 		
 		return result;
 	}
+	public int insertPurcharse(HashMap<String, String> slip) {
+		
+		result = session.insert("insertPurcharse", slip);
+		if(result>0) {
+			session.insert("insertTransPurcharse", slip);
+			session.insert("insertTransBookPurcharse", slip);
+		}else {
+			session.rollback();
+		}
+		
+		return result;
+	}
+	
+	
 	
 	public int modifyTransaction(HashMap<String, String> slip) {
 			
@@ -265,9 +281,45 @@ public class DbAcesse {
 		
 		return result;
 	}
+//매입 전표 수정
+	public int modifyPurcharse(HashMap<String, String> slip) {
+		
+		String a = session.selectOne("vatCheckPur", slip);
+		System.out.println(slip);
+		if(a!=null) {
+			System.out.println("부가세있");
+			result = session.update("updateTransPur", slip);
+		}else if(a==null) {
+			System.out.println("부가세없");
+			result = session.update("updateTransAndVatPur", slip);
+		}
+		
+		session.update("updateTransBookPur", slip);
+
 	
+	return result;
+}
+	//deleteTran
+	
+public int deleteTran(HashMap<String, String> slip) {
+		
+		result = session.delete("deleteTran", slip);
+
+
+	
+	return result;
+}
+	
+	
+//매출전표 조회
 	public List<HashMap<String, Object>> selectSlipList(Map<String, String> key){
 		slips = session.selectList("selectSlipList",key);
+		return slips;
+	}
+	
+//매입전표 조회
+	public List<HashMap<String, Object>> selectSlipListPurcharse(Map<String, String> key){
+		slips = session.selectList("selectSlipListPurcharse",key);
 		return slips;
 	}
 //메인 페이지 게시글
@@ -277,14 +329,58 @@ public class DbAcesse {
 		return check;
 	}
 // 메인 페이지 가이드 게시판
+	
 	public List<Map<String, Object>> mainPageGuide(){
 		check = session.selectList("mainPageGuide");
 		
 		return check;
 	}
 		
+//계정과목(비용) 조회
+	public List<Map<String, Object>> selectSubject(String key){
 		
+		check = session.selectList("selectSubject", key);
+		return check;
+	}
+//게시판
+	//메인 게시판
+	public List<Map<String, Object>> selectBoard(){
+		check = session.selectList("boardSelect");
+		return check;
+	}
+	//이용가이드 게시판
+	public List<Map<String, Object>> selectGuide(){
+		check = session.selectList("guideSelect");
+		return check;
+	}
+	//게시글 삭제
+	public int deleteArticle(String index) {
+		result = session.delete("deleteArticle", index);
+		return result;
+	}
+	//글 데이터
+	public Article selectArticle(String index){
+		article = session.selectOne("selectArticle", index);
 		
+		return article;
+	}
+	//게시글 조회수+1
+	public int viewArticle(String index) {
+		result = session.update("viewArticle", index);
+		return result;
+	}
+	public Map<String, Object> checkLikey(HashMap<String, String> info) {
+		mapdata = session.selectOne("checkLikey", info);
+		return mapdata;
+	}
+	public int updateArticle(Article article) {
+		result = session.update("updateArticle", article);
+		return result;
+	}
+	public int writeArticle(Article article) {
+		result = session.insert("writeArticle", article);
+		return result;
+	}
 	
 	
 	public void commit() {

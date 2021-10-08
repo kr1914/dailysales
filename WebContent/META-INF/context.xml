@@ -7,7 +7,7 @@
 		password="810904"
 		driverClassName="com.mysql.jdbc.Driver"
 		factory="org.apache.tomcat.dbcp.dbcp2.BasicDataSourceFactory"
-		url="jdbc:mysql://localhost:3306/mvc2?useUnicode=true&amp;characterEncoding=utf8"
+		url="jdbc:mysql://localhost:3306/mvc2?useUnicode=true&amp;characterEncoding=utf8&amp;autoReconnect=true"
 		maxActive="500"
 	/>
 </Context>

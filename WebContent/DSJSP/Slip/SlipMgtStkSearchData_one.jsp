@@ -12,4 +12,5 @@
 var t1 = "<%=stkList.get(0).get("stk_code")%>";
 var t2 = "<%=stkList.get(0).get("stk_name")%>";
 var t3 = "<%=stkList.get(0).get("stk_vat")%>";
+var t4 = "<%=stkList.get(0).get("stk_size1")%>/<%=stkList.get(0).get("stk_size2")%>";
 </script>

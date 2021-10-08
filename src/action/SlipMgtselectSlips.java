@@ -13,6 +13,8 @@ import javax.servlet.http.HttpSession;
 import com.daily.dto.ActionForward;
 import com.daily.svc.AdminCheck;
 import com.daily.svc.SlipMgtList;
+import com.daily.svc.SlipMgtListPurcharse;
+import com.daily.svc.SlipSelect;
 
 public class SlipMgtselectSlips implements Action {
 	
@@ -20,8 +22,8 @@ public class SlipMgtselectSlips implements Action {
 	HttpSession session;
 	List<Map<String, Object>> login; //세션 로그인 데이터
 	Map<String, Object> callCo;  //지금 메인 회사인 부분
-	String adkey ="";
 	AdminCheck admin;
+	SlipSelect select; //셀렉트용 인터페이스
 	List<HashMap<String, Object>> slip = null;
 	Map<String, String> param = null;
 	@Override
@@ -47,14 +49,22 @@ public class SlipMgtselectSlips implements Action {
 			}else {
 				//실제 작업 넣는 곳
 				param = new HashMap<String, String>();
-				param.put("custcode", request.getParameter("custcode"));
 				param.put("date", request.getParameter("date"));
 				param.put("admin_key", key);
+				String tab = request.getParameter("tab");
 				
-				SlipMgtList sml = new SlipMgtList();
 				
-				slip = sml.excute(param);
+				if(tab.equals("매출")) {
+					select = new SlipMgtList();
+					param.put("custcode", request.getParameter("custcode"));
+				}else if(tab.equals("매입")) {
+					select = new SlipMgtListPurcharse();
+					param.put("custcode", request.getParameter("custcode"));
+				}else if(tab.equals("비용")) {
+					
+				}
 				
+				slip = select.excute(param);
 				request.setAttribute("slipList", slip);
 	
 				forward = new ActionForward();

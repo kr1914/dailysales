@@ -1,13 +1,19 @@
+<%@page import="com.daily.dto.Article"%>
+<%@page import="com.daily.dao.DbAcesse"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%
+	DbAcesse dao = DbAcesse.getInstance();
+	Article article = null;
+	String index = request.getParameter("bd_index");
+	article = (Article)dao.selectArticle(index);
+	String text = article.getBd_article();
+	article.setBd_article(text.replace("<br>", "\n"));
+%>
+	<c:set var="modi" value="<%=article %>"/>
 
-<sql:setDataSource var="db" scope="page" driver="com.mysql.jdbc.Driver" url="jdbc:mysql://localhost:3306/dailysal?useUnicode=true&characterEncoding=utf8" user="root" password="810904"/>
-<!-- 게시판 리스트 작성 부분 : 차후에 작성자 부분을 닉네임으로 변경할 예정 (미완)-->
-<sql:query var="post" dataSource="${db}">
-	select * from board where bd_index=<%=request.getParameter("bd_index") %>;
-</sql:query>
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,7 +39,6 @@
 		</script>
 	</c:when>
 	<c:otherwise>
-	<c:forEach var="modi" items="${post.rows}">
 		<form action="ModifyPost_action.jsp">
 			<div class="wrap">
 				<div class="article">
@@ -47,16 +52,24 @@
 									<td style="width:10%">머리말</td>
 									<td style="width:90%">
 										<select name="header">
-											<c:forEach var="head" items="<%=header%>">
-												<c:choose>
-													<c:when test="${modi.bd_header eq head}">
-														<option value="${head}" selected="selected">${head}</option>
-													</c:when>
-													<c:otherwise>
-														<option value="${head}">${head}</option>
-													</c:otherwise>
-												</c:choose>
-											</c:forEach>
+										<c:choose>
+											<c:when test="${modi.bd_header eq '이용가이드'}">
+												<option value="이용가이드" selected="selected">이용가이드</option>
+											</c:when>
+											<c:otherwise>
+												<c:forEach var="head" items="<%=header%>">
+													<c:choose>
+														<c:when test="${modi.bd_header eq head}">
+															<option value="${head}" selected="selected">${head}</option>
+														</c:when>
+														<c:otherwise>
+															<option value="${head}">${head}</option>
+														</c:otherwise>
+													</c:choose>
+												</c:forEach>
+											</c:otherwise>
+										</c:choose>
+											
 										</select>
 									</td>
 								</tr>
@@ -88,7 +101,6 @@
 				</div>
 			</div>
 		</form>
-		</c:forEach>
 	</c:otherwise>
 </c:choose>
 <script type="text/javascript">

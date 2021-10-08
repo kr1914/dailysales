@@ -1,19 +1,25 @@
+<%@page import="java.util.Map"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="com.daily.dto.Article"%>
+<%@page import="com.daily.dao.DbAcesse"%>
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-
-
-
-<!-- 데이터 베이스 연결 -->
-<sql:setDataSource var="db"  scope="page" driver="com.mysql.jdbc.Driver" url="jdbc:mysql://localhost:3306/dailysal" user="root" password="810904"/>
-<sql:update var="view" dataSource="${db}">
-	update board set bd_view = bd_view+1 where bd_index=<%=request.getParameter("bd_index")%>;
-</sql:update>
-<sql:query var="post" dataSource="${db}">
-	select * from board where bd_index=<%=request.getParameter("bd_index") %>;
-</sql:query>
+<%
+	DbAcesse dao = DbAcesse.getInstance();
+	Article article = null;
+	String index = request.getParameter("bd_index");
+	article = (Article)dao.selectArticle(index);
+	int result = dao.viewArticle(index);
+	if(result>0){
+		dao.commit();
+	}else {
+		dao.rollback();
+	}
+%>
+	<c:set var="pos" value="<%=article%>"/>
 <!DOCTYPE html>
 <html>
 <head>
@@ -102,13 +108,14 @@
 <body>
 	<div class="wrap">
 		<div class="article">
-			<c:forEach var="pos" items="${post.rows}">
 			<div class="header">
 				<div id="postDiv">[${pos.bd_header}]</div>
 				<hr>
 				<div id="posttitle"><h2>${pos.bd_title}</h2></div>
-				<div id="dateCreated"><span><fmt:formatDate value="${pos.bd_date}" pattern="YYYY-MM-dd HH:ss"/></span></div>
-				<div id="writer">작성자 : ${pos.bd_creator}</a></div>
+				<div id="dateCreated"><span><fmt:parseDate var="date" value="${pos.bd_date}" pattern="YYYY-MM-dd HH:ss"></fmt:parseDate>
+				
+				<fmt:formatDate value="${date}" pattern="YYYY-MM-dd HH:ss"/></span></div>
+				<div id="writer">작성자 : ${pos.bd_creator}</div>
 				<hr>
 			</div>
 			<div class="section"> <!-- 차후에 링크 부분은 변경이 필요함. -->
@@ -116,26 +123,26 @@
 			</div>
 			<div class="thumbsUp">
 			<!-- 좋아요 했었는지 여부확인 후 좋아요 아이콘 생성 -->
-				<sql:query var="checkLike" dataSource="${db}">
-					select count(*) count, like_state from likey where like_article=${pos.bd_index} and like_email='<%=(String)session.getAttribute("ID")%>';
-				</sql:query>
-				<c:forEach var="cklike" items="${checkLike.rows}">
-					<c:choose>
-						<c:when test="${cklike.like_state =='1'}">
-							<img class="bi" src="..\..\img\hand-thumbs-up-fill.svg" alt="좋아요">
-						</c:when>
-						<c:otherwise>
-							<img class="bi" src="..\..\img\hand-thumbs-up.svg" alt="좋아요">
-						</c:otherwise>
-					</c:choose>
-				</c:forEach>
+	<%
+		HashMap<String, String> info = new HashMap<String, String>();
+		info.put("index", index);
+		info.put("ID",(String)session.getAttribute("ID"));
+		Map<String, Object> checkLike = dao.checkLikey(info);
+	%>
+		<c:set var="cklike" value="<%=checkLike%>"></c:set>
+			<c:choose>
+				<c:when test="${cklike.like_state =='1'}">
+					<img class="bi" src="..\..\img\hand-thumbs-up-fill.svg" alt="좋아요">
+				</c:when>
+				<c:otherwise>
+					<img class="bi" src="..\..\img\hand-thumbs-up.svg" alt="좋아요">
+				</c:otherwise>
+			</c:choose>
 			</div>
 				<c:if test="${ID eq pos.bd_creator}">
 					<input class="modifyBtn" type="button" value="수정하기" onclick="modify()">
 				</c:if>
 					<input class="backBtn" type="button" value="이전으로" onclick="back()">
-			
-			</c:forEach>
 		</div>
 	</div>
 </body>

@@ -8,13 +8,13 @@
 	<table class="AcctMgtTable_View">
 	<tbody>
 		<tr>
-			<th style="width:8%">No.</th>
-			<th style="width:15%">구분</th>
-			<th style="width:30%">계좌명</th>
-			<th style="width:15%">은행명</th>
-			<th style="width:15%">예금주명</th>
-			<th style="width:8%">계좌번호</th>
-			<th style="width:9%">잔액</th>
+			<th style="width:40px">No.</th>
+			<th style="width:50px">구분</th>
+			<th style="width:100px">계좌명</th>
+			<th style="width:100px">은행명</th>
+			<th style="width:80px">예금주명</th>
+			<th style="width:150px">계좌번호</th>
+			<th style="width:150px">잔액</th>
 		</tr>
 		<%if(acctList.size() == 0){ %>
 		<tr>

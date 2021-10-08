@@ -253,6 +253,26 @@ $(function functionName() {
 	
 	
 	//인증 메일 발송 (세션에 값 생성 후 alert에 띄워서 보여주기)
+	function codeSend(email){
+		$.ajax({
+			url:"codeSend.do",
+			data:{email:email},
+			error: function() {
+				alert("연결 오류");
+			},
+			success: function(e) {
+				alert("인증번호가 발송되었습니다.");
+			}
+		});
+	}
+	
+	$('#verificationBtn').click(function() {
+		debugger
+		var email = $('input[name="email"]').val();
+		codeSend(email);
+	});
+	
+	
 	// #ff6a6a 빨간줄
 	$('#verificationBtn').click(function() {
 		var inp = $('input');

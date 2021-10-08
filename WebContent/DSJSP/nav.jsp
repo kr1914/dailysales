@@ -215,7 +215,7 @@
         <div id="header_nav" class="">
        		 <div class="header_nav">
        	 		<ol>
-	        		<li id="introMenu" class="header_nav_icon" onclick="content.location.href=''">소개</li>
+	        		<li id="introMenu" class="header_nav_icon" onclick="content.location.href='intro.do'">소개</li>
 	        		<li class="header_nav_icon" onclick="content.location.href='Guide.do'">이용 가이드</li>
 	        		<li class="header_nav_icon" onclick="content.location.href='Board.do'">커뮤니티</li>
 	        		<li class="header_nav_icon" onclick="content.location.href=''">사이트맵</li>

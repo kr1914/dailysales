@@ -248,9 +248,9 @@ nav{width:100%; height: 50px;}
 				<div class="StkMgtTable">
 					<table class="StkMgtTable_View">
 							<tr>
-								<th style="width:45px">No.</th>
-								<th style="width:80px">구분</th>
-								<th style="width:220px">상품명</th>
+								<th style="width:39px">No.</th>
+								<th style="width:59px">구분</th>
+								<th style="width:150px">상품명</th>
 								<th style="width:100px">규격1</th>
 								<th style="width:100px">규격2</th>
 								<th style="width:100px">입고일자</th>

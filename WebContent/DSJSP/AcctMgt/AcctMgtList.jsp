@@ -227,10 +227,10 @@ nav{width:100%; height: 50px;}
 					<input class="searchBtn" type="button" name="searchBtn" value="검색" onclick="">
 					<select class="searchSet">
 						<option value="all">전체</option>
-						<option value="acct_name">상품명</option>
-						<option value="acct_cla">구분</option>
-						<option value="acct_size">사이즈</option>
-						<option value="acct_date">입고일</option>
+						<option value="acct_name">계좌명</option>
+						<option value="acct_bank">은행명</option>
+						<option value="acct_owner">예금주명</option>
+						<option value="acct_id">계좌번호</option>
 					</select>
 				</div>
 				<div class="menu">
@@ -248,13 +248,13 @@ nav{width:100%; height: 50px;}
 				<div class="AcctMgtTable">
 					<table class="AcctMgtTable_View">
 							<tr>
-								<th style="width:8%">No.</th>
-								<th style="width:15%">구분</th>
-								<th style="width:30%">계좌명</th>
-								<th style="width:15%">은행명</th>
-								<th style="width:15%">예금주명</th>
-								<th style="width:8%">계좌번호</th>
-								<th style="width:9%">잔액</th>
+								<th style="width:40px">No.</th>
+								<th style="width:50px">구분</th>
+								<th style="width:100px">계좌명</th>
+								<th style="width:100px">은행명</th>
+								<th style="width:80px">예금주명</th>
+								<th style="width:150px">계좌번호</th>
+								<th style="width:150px">잔액</th>
 							</tr>
 							<%if(acctList.size() == 0){ %>
 							<tr>

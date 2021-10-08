@@ -1,9 +1,17 @@
+<%@page import="java.util.Map"%>
+<%@page import="java.util.List"%>
+<%@page import="com.daily.dao.DbAcesse"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-
+<%
+	DbAcesse dao = DbAcesse.getInstance();
+	List<Map<String,Object>> articles = null;
+	articles = (List<Map<String,Object>>)dao.selectGuide();
+%>
+<c:set var="boardList" value="<%=articles%>"></c:set>
 
 <!-- 자유게시판 페이지, 테이블 구성 -->
 
@@ -15,13 +23,6 @@
 <jsp:include page="..\HtmlLib.jsp"></jsp:include> <!-- jquery, bootstrap -->
 </head>
 <body>
-<!-- 데이터 베이스 연결 부분 -->
-<sql:setDataSource var="db" driver="com.mysql.jdbc.Driver" url="jdbc:mysql://localhost:3306/dailysal" user="root" password="810904"/>
-<!-- 게시판 리스트 작성 부분 : 차후에 작성자 부분을 닉네임으로 변경할 예정 (미완)-->
-<sql:query var="boardList" dataSource="${db}" >
-select bd_index, bd_header, bd_title, bd_creator, bd_date, bd_view, ifnull(lk,0) lk from (select * from board where bd_header not in ("자유글", "공지사항","문의사항")) board left join (select distinct like_article, sum(like_state) lk from likey group by like_article) b on board.bd_index = b.like_article order by bd_index desc;
-</sql:query>
-<!-- select bd_index, bd_header, bd_title, bd_creator, bd_date, bd_view, ifnull(lk,0) lk from board left join (select distinct like_article, sum(like_state) lk from likey group by like_article) b on board.bd_index = b.like_article order by bd_index desc; -->
 <h1>이용 가이드</h1>
 <!-- Bootstrap 테이블. 넓이가 870 ~ 930px정도로 작아졌을때 게시판 화면을 준비해야함.(미완) -->
 <div class="table-responsiv">
@@ -38,7 +39,7 @@ select bd_index, bd_header, bd_title, bd_creator, bd_date, bd_view, ifnull(lk,0)
 			</tr>
 		</thead>
 		<tbody>
-			<c:forEach var="articles" items="${boardList.rows}">
+			<c:forEach var="articles" items="${boardList}">
 			<tr>
 				<c:set var="index" value="${articles.bd_index}"/>
 				<td>${articles.bd_index}</td>

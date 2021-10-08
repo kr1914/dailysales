@@ -7,7 +7,7 @@ import java.util.Map;
 
 import com.daily.dao.DbAcesse;
 
-public class SlipMgtList {
+public class SlipMgtList implements SlipSelect{
 
 	public List<HashMap<String, Object>> excute(Map<String, String> key) throws IOException {
 

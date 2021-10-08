@@ -9,7 +9,7 @@
       <transactionManager type="JDBC"/>
       <dataSource type="POOLED">
         <property name="driver" value="com.mysql.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql://localhost:3306/dailysal?useUnicode=true&amp;characterEncoding=utf8&amp;allowMultiQueries=true"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/dailysal?useUnicode=true&amp;characterEncoding=utf8&amp;allowMultiQueries=true&amp;autoReconnect=true"/>
         <property name="username" value="root"/>
         <property name="password" value="810904"/>
       </dataSource>

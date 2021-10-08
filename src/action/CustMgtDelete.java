@@ -26,12 +26,9 @@ public class CustMgtDelete implements Action {
 	
 	@Override
 	public ActionForward execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
 		session = request.getSession();
 		forward = new ActionForward();
-		
 		String custCode = request.getParameter("CustCode"); 
-		
 		if(session.getAttribute("Login")==null) {
 			WrongMasageSend wr = new WrongMasageSend();
 			wr.wrongAccess("로그인이 필요합니다.", response);
@@ -41,7 +38,6 @@ public class CustMgtDelete implements Action {
 		}else {
 			//권한 체크 부분 (myCoCheckAdminFree)
 			admin = AdminCheck.getInstance();
-			
 			//login : 세션 로그인 데이터, key = 
 			login = (List<Map<String, Object>>)session.getAttribute("Login");
 			String key = (String)session.getAttribute("nowCo");
@@ -50,7 +46,6 @@ public class CustMgtDelete implements Action {
 					callCo = t;// id, name, company, admin, key
 				}
 			}
-			
 			//nowCo와 cust_code가 일치하는 회사의 정보를 Customer로 가져오기
 			if(admin.myCoCheckManager(callCo)) {
 				params = new HashMap<String, String>();
@@ -63,10 +58,7 @@ public class CustMgtDelete implements Action {
 				}else {
 					WrongMasageSend wr = new WrongMasageSend();
 					wr.wrongAccess("삭제 에러", response);
-				}
-				
-				
-				
+				}	
 			}else{
 				WrongMasageSend wr = new WrongMasageSend();
 				wr.wrongAccess("권한이 부족합니다.", response);

@@ -10,9 +10,10 @@
 <title>전표 입력</title>
 <jsp:include page="../HtmlLib.jsp"/>
 <script src="../js/colResizable-1.5.min.js"></script>
+
 </head>
 <style>
-.wrap{width:960px; height:100%;}
+.wrap{width:960px; height:100%; padding-left:10px;}
 .SlipHeader{width:1000px; height: 300px; vertical-align: top;}
 .SlipInsertTitle{width:1000px; height: 50px; magin-top: 20px;}
 .CustInfoContainer{width:420px; display: inline-block; height: 260px; border: solid 1px #cccccc; box-shadow: -2px 4px 8px 2px #e2e2e2; border-radius:19px; padding: 10px; float:left;}
@@ -69,15 +70,14 @@ td[state="update"]>span>input:focus{outline: solid 2px green;}
 #SlipData > tr:nth-child(2n) > td{background-color:#f1f1f1;}
 .SlipInput{width:100%; height: 22px;}
 #rowCreate{border: none;  border-radius: 5px;  margin: 5px;    font-size: 11px;    width: 50px;    height: 20px;    font-weight: bold;    background-color: #ffd2d2;}
-.SlipController{text-align: right;}
+#rowDelete{border: none;  border-radius: 5px;  margin: 5px;    font-size: 11px;    width: 60px;    height: 20px;    font-weight: bold;    background-color: #93c3ff;}
+.SlipController{text-align: right; width:100%;}
 #save{border: none;    margin: 5px;   border-radius: 5px; font-size: 12px;    width: 50px;    height: 30px;    font-weight: bold;    background-color: #c9dcf9;}
 #reset{    border: none;    margin: 5px;  border-radius: 5px;  font-size: 12px;    width: 50px;    height: 30px;    font-weight: bold;    background-color: #d6fbc4;}
 
 
 </style>
 <script type="text/javascript">
-
-
 
 //달력 날짜 클릭시 css효과
 function clickDate(date) {
@@ -95,109 +95,9 @@ function dateFocus(n) {
 		}
 	});
 }
-//거래처 검색 기능
-function searchCust(word) {
-	$.ajax({
-		url:"SlipMgtCustSearch.do",
-		data:{keyword:word},
-		error: function() {
-			
-		},
-		success: function(e) {
-			if(e.indexOf('<input type="hidden" value="OneData">')!=-1){
-				$('.CustInfoTable').html(e);
-				selectSlips($('input[name="cust_code"]').val(),$('input[name="date"]').val());
-			}else if(e.indexOf('<input type="hidden" value="ListData">')!=-1){
-				$('#pager').html(e);
-			}else if(e.indexOf('<input type="hidden" value="None">')!=-1){
-				$('#pager').html(e);
-			}
-		}
-		
-	});
-}
-//상품 조회 기능
-function searchStock(word){
-	$.ajax({
-		url:"SlipMgtStockSearch.do",
-		data:{keyword:word},
-		errorr: function() {
-			alert("연결오류");
-		},
-		success: function(e) {
-			if(e.indexOf('<input type="hidden" value="OneDataStk">')!=-1){
-				$('#pager').html(e);
-				selectStock(t1, t2, t3);
-			}else if(e.indexOf('<input type="hidden" value="ListDataStk">')!=-1){
-				$('#pager').html(e);
-			}else if(e.indexOf('<input type="hidden" value="NoneStk">')!=-1){
-				$('#pager').html(e);
-			}
-		}
-	})
-}
 
-//상품 선택 기능
-function selectStock(stk_code, stk_name, stk_vat) {
-	var update = $('#SlipData td[class="stk_name"][state="update"]');
-	update.children('span').children('input[name="stk_name"]').val(stk_name);
-	update.children('input[name="stk_code"]').val(stk_code);
-	update.children('input[name="stk_vat"]').val(stk_vat);
-	update.parent().children('td[class="quantity"]').children('span').children('input').select();
-	update.parent().children('td[class="collect"]').children('span').children('input').attr('disabled','disabled');
-}
-
-
-//단가*수량 계산기능(VAT)
-function calculateSlip() {
-	var quantity = $('#SlipData td[class="quantity"][state="update"]').children('span').children('input');
-	var price = $('#SlipData td[class="price"][state="update"]').children('span').children('input');
-	var cal = $('#SlipData td[class="amount"][state="update"]').children('span').children('input');
-	var vat = $('#SlipData td[class="vat"][state="update"]').children('span').children('input');
-	var vatCheck = $('#SlipData td[class="stk_name"][state="update"]').children('input[name="stk_vat"]');
-	
-	cal.val(quantity.val()*price.val());
-	if(vatCheck.val()=="과세"){
-		vat.val(Math.round(cal.val()/11));
-		cal.val(Math.round(cal.val()/1.1));
-		price.val(Math.round(price.val()/1.1));
-	}
-	$('input[class="SlipInput"][name="collect"]').select();
-}
-
-//전표 테이블 행추가 버튼
-function SlipTableRowCreate() {
-	var lastRow = $('#SlipData tr:last-child').index()+2;
-	var row = '<tr><td class="no" state="view"><span>'+lastRow+'</span><input type="hidden" name="tran_index" value=""></td>	<td class="stk_name" state="view"><span></span><input type="hidden" name="stk_code" value=""><input type="hidden" name="stk_vat" value=""></td><td class="stk_size1" state="view"><span></span></td><td class="quantity" state="view"><span></span></td><td class="price" state="view"><span></span></td><td class="amount" state="view"><span></span></td><td class="vat" state="view"><span></span></td><td class="collect" state="view"><span></span><input type="hidden" name="colType" value=""><input type="hidden" name="acct_code" value=""></td><td class="memo" state="view"><span></span></td></tr>';
-	$('#SlipData').append(row);
-}
 var SlipData = new Array(); //전표 송신시 사용하는 객체배열
-//전표데이터 추출
-function slipsData() {
-	var tablerow = $('#SlipData tr').length; //테이블 행 수
-	for (var i = 0; i<tablerow; i++){ //각 행에서 데이터 추출해 SlipData 배열에 저장
-		var slipT;
-		if($('#SlipData td[class="stk_name"]').eq(i).children('input[name="stk_code"]').val() != null && $('#SlipData td[class="stk_name"]').eq(i).children('input[name="stk_code"]').val() != ""){
-			slipT = "매출";
-		}else if($('#SlipData td[class="collect"]').eq(i).children('input[name="colType"]').val() == "101" || $('#SlipData td[class="collect"]').eq(i).children('input[name="colType"]').val() == "102"){
-			slipT = "수금";
-		}
-		SlipData[i] = {
-				custcode: $('.CustInfoTable input[name="cust_code"]').val(),
-				date : $('#calenderDateViewer input[name="date"]').val(),
-				tran_index : $('input[name="tran_index"]').eq(i).val(),
-				stkcode: $('#SlipData td[class="stk_name"]').eq(i).children('input[name="stk_code"]').val(),
-				quantity: $('#SlipData td[class="quantity"]').eq(i).children('span').text(),
-				price: $('#SlipData td[class="price"]').eq(i).children('span').text(),
-				amount: $('#SlipData td[class="amount"]').eq(i).children('span').text(),
-				vat: $('#SlipData td[class="vat"]').eq(i).children('span').text(),
-				collect: $('#SlipData td[class="collect"]').eq(i).children('span').text(),
-				type: $('#SlipData td[class="collect"]').eq(i).children('input[name="colType"]').val(),
-				acct_code: $('#SlipData td[class="collect"]').eq(i).children('input[name="acct_code"]').val(),
-				slipType: slipT,
-		}
-	}
-}
+
 //전표 저장 기능
 function saveSlip(data) {
 	$.ajax({
@@ -207,51 +107,21 @@ function saveSlip(data) {
 		    alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
 		},
 		success: function(e) {
+			dateFocus($('input[name="date"]').val());
 			alert("저장완료");
 		}
 	});
 }
-//전표저장시 데이터 없는 행 삭제
-function rowRemove() {
-	var tablerow = $('#SlipData tr').length;
-	for (var n=0; n<tablerow;n++){
-		var stk = $('#SlipData td[class="stk_name"]').eq(n).children('input[name="stk_code"]');
-		var col = $('#SlipData td[class="collect"]').eq(n).children('span').text()
-		if(stk.val() == "" && col == ""){
-			stk.parent().parent().remove();
-		}
-	}
-	tablerow = $('#SlipData tr').length;
-	for(var n=0; n<tablerow; n++){
-		$('#SlipData td[class="no"]').eq(n).children('span').text(n+1);
-	}
-}
+
 
 $(document).on('click','#save', function() {
-	resetSlipInput();
-	rowRemove();
-	slipsData()
-	saveSlip(SlipData);
-	calSales();
+	resetSlipInput(); //input 모드로 되어있는행 없애기
+	rowRemove(); // 전표정보 없는 행 삭제
+	slipsData(); //전표정보 배열 타입으로 저장
+	saveSlip(SlipData); //저장기능 실행
+	calSales(); //매출액 계산
 });
 
-
-
-//전표 조회 기능
-function selectSlips(custcode, date) {
-	$.ajax({
-		url:"selectSlips.do",
-		data: {custcode:custcode, date:date},
-		error: function() {
-			alert("조회 실패");
-		},
-		success: function(e) {
-			$('#SlipData').html(e);
-			SlipTableRowCreate();
-			SlipTableRowCreate();
-		}
-	});
-}
 //합계표 계산식
 function calSales() {
 	var sal=0;
@@ -291,54 +161,12 @@ function calSales() {
 	
 }
 
-
-
-//수금선택창 팝업
-
-function CollectPop(td) {
-	var wid = td.css('width');
-	var divX = td.offset().left;
-	var divY = td.offset().top;
-	
-	$('#pager').html('<div id="Pop"><input type="radio" name="paymentMethod" value="현금">현금||<input type="radio" name="paymentMethod" value="계좌" checked="checked">계좌 <input type="button" value="X" onclick="closePop()"></div>');
-	$('#Pop').css({
-		'width':wid,
-		'height':'30px',
-		'background-color':'#333333',
-		'position':'fixed',
-		'left':divX,
-		'top':divY-32,
-		'color':'#fff3b6',
-		'box-sizing':'border-box',
-		'border':'double 2px #4cb3ff',
-		
-	});
-	$('#Pop input[type="button"]').css({
-		'color':'black',
-		'width':'30px',
-	});
-	$('#Pop').fadeIn(500);
-	$('#Pop').children('input[value="102"]').focus();
-	$('#Pop').keyup(function(e) {
-		if(e.keyCode == 13){
-			if($('input[name="paymentMethod"][value="현금"]').is(':checked')){
-				cashInput();
-			}else if($('input[name="paymentMethod"][value="계좌"]').is(':checked')){
-				accountInput();
-			}
-		}
-	});
-	$(this).focusout(function() {
-	});
-}
 //현금입력하기
 function cashInput() {
 	var update = $('#SlipData td[class="collect"][state="update"]');
 	update.children('input[name="colType"]').val("101");
 	update.children('input[name="acct_code"]').val('1');
 	update.children('span').children('input').removeAttr('readonly');
-	
-	
 	closePop();
 }
 //계좌선택 팝업
@@ -354,18 +182,8 @@ function accountInput() {
 		
 	})
 }
-//계좌 선택 기능
-function selectAcct(code, name) {
-	var update = $('#SlipData td[class="collect"][state="update"]'); //입력중인 수금칸 td
-	update.children('input[name="colType"]').val("102"); //수금 타입 입력
-	update.children('input[name="acct_code"]').val(code); //수금
-	update.next('td').children('span').children('input[name="memo"]').val(name); //비고란에 계좌이름 입력
-	update.next('td').children('span').children('input[name="memo"]').attr('readonly','readonly');
-	update.children('span').children('input').removeAttr('readonly');
-	$('#SlipData td[class="stk_name"][state="update"]').children('span').children('input[name="stk_name"]').attr('disabled','disabled');
-	update.children('span').children('input').select();
-	
-}
+
+
 //수금선택창 팝업 닫기
 function closePop(){
 	$('#Pop').fadeOut();
@@ -426,7 +244,8 @@ function calend(today) {
 }
 
 
-//거래처 리스트 창 닫기
+//각 리스트 창 닫기
+
 function closeCustList() {
 	$('.CustMgtListOverlay').fadeOut(300);
 	$('.CustMgtListWrap').fadeOut(300);
@@ -448,7 +267,46 @@ function closeAcctList() {
 	$('.AcctMgtListWrap').delay(300).remove();
 }
 
+
+
+//탭 선택 기능
+function tabCSSChange(tab) {
+	
+	$('input[name="nowTab"]').val(tab);
+	var container = $('.CustInfoContainer, .SalesStateContainer, #calenderContainer');
+	if(tab=="매출"){ //#ffb3b3 , 
+		container.css({
+			'box-shadow':'2px 4px 8px 2px #ffb3b3',
+			'border':'solid 1px #ffb3b3'
+		});
+	}else if(tab=='매입'){
+		container.css({
+			'box-shadow':'2px 4px 8px 2px #9593fd',
+			'border':'solid 1px #9593fd'
+		});
+	}else if(tab=="비용"){
+		container.css({
+			'box-shadow':'2px 4px 8px 2px #91e492',
+			'border':'solid 1px #91e492'
+		});
+	}else if(tab=="수동"){
+		container.css({
+			'box-shadow':'2px 4px 8px 2px #e2e2e2',
+			'border':'solid 1px #e2e2e2'
+		});
+	}
+}
+
 $(document).ready(function() {
+	
+	//탭 선택(매출,매입,비용,수동), 초기값 매출
+	tabCSSChange("매출");	
+	$('.TabBtn').click(function() {
+		tabCSSChange($(this).val());
+		slipTableReset($(this).val());
+		custContainerReset();
+		$('#custSearchbar').select();
+	});
 	
 	$('#SlipViewer').colResizable({ //전표입력창 사이즈 조절 기능 추가
 		resizeMode:'flex',
@@ -510,7 +368,6 @@ $(document).ready(function() {
 			calend(nextM);
 			
 		});
-	//날짜 선택시
 	
 	//input날짜 변경시
 	$('.Slipdate').keyup(function(event) {
@@ -520,12 +377,6 @@ $(document).ready(function() {
 				calend(d);
 			}
 		});
-	//전표조회시
-	
-	
-	
-	//상품명 검색시
-	
 });
 //상품명 검색시
 
@@ -551,11 +402,9 @@ $(document).ready(function() {
 			var date = new Date(new Date(yy+"-"+mm+"-"+dd)-offset).toISOString().slice(0,10);
 			$('.Slipdate').val(date);
 		}
+		$('#custSearchbar').select();
 	});
-	
-//계산하기
-	
-	
+
 	
 	var values = new Array();
 	var names = new Array();
@@ -567,34 +416,18 @@ $(document).ready(function() {
 			$(item).attr('state','view');
 		});
 	}
-//Slip테이블 Input모드로 변경
-	function updateSlipInput(td) {
-		if(td.attr('state')=="view"){
-			resetSlipInput(); //다른부분에 인풋으로 되어있다면 원래대로 수정
-			
-			td.parent().children('td').children('span').each(function(index, item) {
-				values[index] = $(item).text();
-				names[index] = $(item).parent().attr('class');
-				if(index==0 || index == 2){
-					
-				}else {
-				$(item).text("");
-				$(item).html('<input class="SlipInput" type="text" name="'+names[index]+'" value="'+values[index]+'">');
-				$(item).parent().attr('state','update');
-				$('#SlipData td[state="update"][class="collect"] > span > input').attr('placeholder','Enter를 눌러 입력할 수 있습니다.');
-				$('#SlipData td[state="update"][class="collect"] > span > input').attr('readonly','readonly');
-				}
-			});
+//삭제 버튼클릭시
+	$(document).on('click','#rowDelete', function() { //
+		var tran_index = $('#SlipData td[state="update"][class="memo"]').parent().children('td[class="no"]').children('input[name="tran_index"]').val();
+		if(tran_index == null || tran_index == ""){
+			$('#SlipData td[state="update"][class="memo"]').parent().remove();
+		}else {
+			deleteSlip(tran_index);
+			$('#SlipData td[state="update"][class="memo"]').parent().remove();
 		}
-		if($('#SlipData td[class="stk_name"][state="update"]').children('input[name="stk_code"]').val() != "" || $('#SlipData td[class="stk_code"][state="update"]').children('input[name="stk_code"]').val() != null){
-			$('#SlipData td[class="collect"][state="update"]').children('span').children('input[name="collect"]').attr('disabled','disabled');
-		}
-		if($('#SlipData td[class="collect"][state="update"]').children('span').children('input[name="collect"]').val() != "" || $('#SlipData td[class="collect"][state="update"]').children('span').children('input[name="collect"]').attr('readonly') != "readonly"){
-			$('#SlipData td[class="stk_name"][state="update"]').children('span').children('input[name="stk_name"]').attr('disabled','disabled');
-		}
-		td.children('span').children('input').select();
-	}
-	//전표 테이블 클릭시 해당 행 입력가능하게 수정 후 누른 부분을 포커스 
+	});
+
+//전표 테이블 클릭시 해당 행 입력가능하게 수정 후 누른 부분을 포커스 
 	$(document).on('click','#SlipData td:nth-child(n+2)', function() {
 		updateSlipInput($(this));
 		calSales();
@@ -622,25 +455,8 @@ $(document).ready(function() {
 			$('input[class="SlipInput"][name="price"]').select();
 		}
 	});
-//가격입력시 엔터, 포커스 아웃 하면 부가세 계산
-	$(document).on('keyup','input[class="SlipInput"][name="price"]', function(e) {
-		if(e.keyCode== 13){
-			calculateSlip();
-			$('input[class="SlipInput"][name="memo"]').select();
-		}
-	});
-	$(document).on('focusout','input[class="SlipInput"][name="price"]', function() {
-		calculateSlip();
-	});
 
-	$(document).on('keyup','input[class="SlipInput"][name="collect"]', function(e) {
-		if(e.keyCode == 13){
-			CollectPop($(this));
-		}
-	});
-	$(document).on('click','#reset', function() {
-		selectSlips($('input[name="cust_code"]').val(),$('input[name="date"]').val());
-	});
+//메모에서 행추가
 	$(document).on('keydown','input[class="SlipInput"][name="memo"]', function(e) {
 		var shiftTab = e.keyCode || e.which;
 		if(shiftTab == 9){
@@ -660,8 +476,364 @@ $(document).ready(function() {
 			}
 		}
 	});
+//거래처 정보 초기화
+	function custContainerReset() {
+		$('input[name="custName"]').val(""); //거래처입력부분 초기화
+		$('.CustInfoTable').html('<tr class="custName"><td colspan="2">&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>메모</td><td colspan="2"></td></tr>');
+		}
+//전표 정보초기화
+	function slipTableReset(tab){
+	 var table = $('#SlipViewer');
+	 table.html("");
+	 $.ajax({
+		 url:"changTab.do",
+		 data:{tab:tab},
+		 error: function() {
+			alert("에러");
+		},
+		success: function(page) {
+			if(page.indexOf('<input type="hidden" value="expense"/>') != -1){
+				$('#custSearchbar').attr('disabled','disabled');
+			}else {
+				$('#custSearchbar').removeAttr('disabled');
+			}
+			table.html(page);
+		}
+	 });
+	}
 	
 	
+	
+	//매출에만 쓰는 것
+	
+	//전표 삭제
+	
+	function deleteSlip(tran_index) {
+		$.ajax({
+			url:"SlipDelete.do",
+			data:{tran_index:tran_index},
+			error: function() {
+				alert("에러");
+			},
+			success: function() {
+				alert("삭제");
+			},
+		})
+	}
+	
+	//수금선택창 팝업
+
+function CollectPop(td) {
+	var wid = td.css('width');
+	var divX = td.offset().left;
+	var divY = td.offset().top;
+	
+	$('#pager').html('<div id="Pop"><input type="radio" name="paymentMethod" value="현금">현금||<input type="radio" name="paymentMethod" value="계좌" checked="checked">계좌 <input type="button" value="X" onclick="closePop()"></div>');
+	$('#Pop').css({
+		'width':wid,
+		'height':'30px',
+		'background-color':'#333333',
+		'position':'fixed',
+		'left':divX,
+		'top':divY-32,
+		'color':'#fff3b6',
+		'box-sizing':'border-box',
+		'border':'double 2px #4cb3ff',
+		
+	});
+	$('#Pop input[type="button"]').css({
+		'color':'black',
+		'width':'30px',
+	});
+	$('#Pop').fadeIn(500);
+	$('#Pop').children('input[value="102"]').focus();
+	$('#Pop').keyup(function(e) {
+		if(e.keyCode == 13){
+			if($('input[name="paymentMethod"][value="현금"]').is(':checked')){
+				cashInput();
+			}else if($('input[name="paymentMethod"][value="계좌"]').is(':checked')){
+				accountInput();
+			}
+		}
+	});
+	$(this).focusout(function() {
+	});
+}
+	
+//전표 조회 기능
+function selectSlips(custcode, date, tab) {
+	$.ajax({
+		url:"selectSlips.do",
+		data: {custcode:custcode, date:date, tab:tab},
+		error: function() {
+			alert("조회 실패");
+		},
+		success: function(e) {
+			$('#SlipData').html(e);
+			SlipTableRowCreate();
+			SlipTableRowCreate();
+		}
+	});
+}
+	
+//단가*수량 계산기능(VAT)
+function calculateSlip() {
+	var quantity = $('#SlipData td[class="quantity"][state="update"]').children('span').children('input');
+	var price = $('#SlipData td[class="price"][state="update"]').children('span').children('input');
+	var cal = $('#SlipData td[class="amount"][state="update"]').children('span').children('input');
+	var vat = $('#SlipData td[class="vat"][state="update"]').children('span').children('input');
+	var vatCheck = $('#SlipData td[class="stk_name"][state="update"]').children('input[name="stk_vat"]');
+	
+	cal.val(quantity.val()*price.val());
+	if(vatCheck.val()=="과세"){
+		vat.val(Math.round(cal.val()/11));
+		cal.val(Math.round(cal.val()/1.1));
+		price.val(Math.round(price.val()/1.1));
+	}
+	$('input[class="SlipInput"][name="collect"]').select();
+}
+	
+//상품 선택 기능
+function selectStock(stk_code, stk_name, stk_vat, stk_size) {
+	var update = $('#SlipData td[class="stk_name"][state="update"]');
+	update.children('span').children('input[name="stk_name"]').val(stk_name);
+	update.children('input[name="stk_code"]').val(stk_code);
+	update.children('input[name="stk_vat"]').val(stk_vat);
+	update.parent().children('td[class="stk_size1"]').children('span').val(stk_size);
+	update.parent().children('td[class="quantity"]').children('span').children('input').select();
+	update.parent().children('td[class="collect"]').children('span').children('input').attr('disabled','disabled');
+}
+	
+//상품 조회 기능
+function searchStock(word){
+	$.ajax({
+		url:"SlipMgtStockSearch.do",
+		data:{keyword:word},
+		errorr: function() {
+			alert("연결오류");
+		},
+		success: function(e) {
+			if(e.indexOf('<input type="hidden" value="OneDataStk">')!=-1){
+				$('#pager').html(e);
+				selectStock(t1, t2, t3, t4);
+			}else if(e.indexOf('<input type="hidden" value="ListDataStk">')!=-1){
+				$('#pager').html(e);
+			}else if(e.indexOf('<input type="hidden" value="NoneStk">')!=-1){
+				$('#pager').html(e);
+			}
+		}
+	})
+}
+	
+	//전표저장시 데이터 없는 행 삭제
+function rowRemove() {
+	var tablerow = $('#SlipData tr').length;
+	for (var n=0; n<tablerow;n++){
+		var stk = $('#SlipData td[class="stk_name"]').eq(n).children('input[name="stk_code"]');
+		var col = $('#SlipData td[class="collect"]').eq(n).children('span').text()
+		if(stk.val() == "" && col == ""){
+			stk.parent().parent().remove();
+		}
+	}
+	tablerow = $('#SlipData tr').length;
+	for(var n=0; n<tablerow; n++){
+		$('#SlipData td[class="no"]').eq(n).children('span').text(n+1);
+	}
+}
+	//거래처 검색 기능
+function searchCust(word) {
+	$.ajax({
+		url:"SlipMgtCustSearch.do",
+		data:{keyword:word},
+		error: function() {
+			
+		},
+		success: function(e) {
+			if(e.indexOf('<input type="hidden" value="OneData">')!=-1){
+				$('.CustInfoTable').html(e);
+				$('#custSearchbar').val("");
+				selectSlips($('input[name="cust_code"]').val(),$('input[name="date"]').val(), $('input[class="nowTab"]').val());
+			}else if(e.indexOf('<input type="hidden" value="ListData">')!=-1){
+				$('#pager').html(e);
+			}else if(e.indexOf('<input type="hidden" value="None">')!=-1){
+				$('#pager').html(e);
+			}
+		}
+		
+	});
+}
+	
+	//전표데이터 추출 (매출, 매입)
+function slipsData() {
+	var tablerow = $('#SlipData tr').length; //테이블 행 수
+	var SlipTabMode = $('input[name="nowTab"]').val();
+	for (var i = 0; i<tablerow; i++){ //각 행에서 데이터 추출해 SlipData 배열에 저장
+		var slipT;
+		var note
+		if(SlipTabMode=="매출"){
+			if($('#SlipData td[class="stk_name"]').eq(i).children('input[name="stk_code"]').val() != null && $('#SlipData td[class="stk_name"]').eq(i).children('input[name="stk_code"]').val() != ""){
+				slipT = "매출";
+				note = $('#SlipData td[class="memo"]').eq(i).children('span').text();
+			}else if($('#SlipData td[class="collect"]').eq(i).children('input[name="colType"]').val() == "101" || $('#SlipData td[class="collect"]').eq(i).children('input[name="colType"]').val() == "102"){
+				slipT = "수금";
+				note = "";
+			}
+		}else if(SlipTabMode=="매입"){
+			if($('#SlipData td[class="stk_name"]').eq(i).children('input[name="stk_code"]').val() != null && $('#SlipData td[class="stk_name"]').eq(i).children('input[name="stk_code"]').val() != ""){
+				slipT = "매입";
+				note = $('#SlipData td[class="memo"]').eq(i).children('span').text();
+			}else if($('#SlipData td[class="collect"]').eq(i).children('input[name="colType"]').val() == "101" || $('#SlipData td[class="collect"]').eq(i).children('input[name="colType"]').val() == "102"){
+				slipT = "지출";
+				note = "";
+			}
+		}else if(SlipTabMode=="비용"){
+			
+		}
+		
+		SlipData[i] = {
+				custcode: $('.CustInfoTable input[name="cust_code"]').val(),
+				date : $('#calenderDateViewer input[name="date"]').val(),
+				tran_index : $('input[name="tran_index"]').eq(i).val(),
+				stkcode: $('#SlipData td[class="stk_name"]').eq(i).children('input[name="stk_code"]').val(),
+				quantity: $('#SlipData td[class="quantity"]').eq(i).children('span').text(),
+				price: $('#SlipData td[class="price"]').eq(i).children('span').text(),
+				amount: $('#SlipData td[class="amount"]').eq(i).children('span').text(),
+				vat: $('#SlipData td[class="vat"]').eq(i).children('span').text(),
+				collect: $('#SlipData td[class="collect"]').eq(i).children('span').text(),
+				type: $('#SlipData td[class="collect"]').eq(i).children('input[name="colType"]').val(),
+				acct_code: $('#SlipData td[class="collect"]').eq(i).children('input[name="acct_code"]').val(),
+				slipType: slipT,
+				memo: note,
+		}
+	}
+}
+	//계좌 선택 기능
+function selectAcct(code, name) {
+	var update = $('#SlipData td[class="collect"][state="update"]'); //입력중인 수금칸 td
+	update.children('input[name="colType"]').val("102"); //수금 타입 입력
+	update.children('input[name="acct_code"]').val(code); //수금
+	update.next('td').children('span').children('input[name="memo"]').val(name); //비고란에 계좌이름 입력
+	update.next('td').children('span').children('input[name="memo"]').attr('readonly','readonly');
+	update.children('span').children('input').removeAttr('readonly');
+	$('#SlipData td[class="stk_name"][state="update"]').children('span').children('input[name="stk_name"]').attr('disabled','disabled');
+	update.children('span').children('input').select();
+}
+	//전표 테이블 행추가 버튼(매출매입)
+function SlipTableRowCreate() {
+	var lastRow = $('#SlipData tr:last-child').index()+2;
+	var tab = $('input[name="nowTab"]').val();
+	if(tab == "매출" || tab == "매입"){
+	var row = '<tr><td class="no" state="view"><span>'+lastRow+'</span><input type="hidden" name="tran_index" value=""></td>	<td class="stk_name" state="view"><span></span><input type="hidden" name="stk_code" value=""><input type="hidden" name="stk_vat" value=""></td><td class="stk_size1" state="view"><span></span></td><td class="quantity" state="view"><span></span></td><td class="price" state="view"><span></span></td><td class="amount" state="view"><span></span></td><td class="vat" state="view"><span></span></td><td class="collect" state="view"><span></span><input type="hidden" name="colType" value=""><input type="hidden" name="acct_code" value=""></td><td class="memo" state="view"><span></span></td></tr>';
+	}else if(tab == "비용"){
+		var row = '<tr><td class="no" state="view"><span>'+lastRow+'</span><input type="hidden" name="tran_index" value=""></td><td class="sub_name" state="view"><span></span></td><td class="sub_code" state="view"><span></span></td><td class="payment_select" state="view"><select name="select_payment"><option value="계좌">계좌</option>	<option value="거래처">거래처</option></select>	</td><td class="cust_name" state="view"><span></span><input type="hidden" name="cust_code" value=""></td><td class="payment" state="view"><span></span><input type="hidden" name="payment_code" value=""></td><td class="amount" state="view"><span></span></td><td class="vat" state="view"><span></span></td>	<td class="memo" state="view"><span></span></td></tr>';
+	} 
+	$('#SlipData').append(row);
+}
+//계정과목 검색 창
+function subPopup(sub_name) {
+	$.ajax({
+		url:"subPopup.do",
+		data: {sub_name:sub_name},
+		error: function() {
+			
+		},
+		success: function(data) {
+			if(data.indexOf('<input type="hidden" value="one"/>') != -1){
+				alert("");
+			}else if(data.indexOf('<input type="hidden" value="List"/>') != -1){
+				$('#pager').html(data);
+			} 
+		}
+	});
+}
+//계정과목 선택기능
+	function selectSubTable(td) {
+		var tdIndex = $('#SlipData td[state="update"]').index();
+		td.parent().children('td').each(function(index, item) {
+			if(index == 0){
+				$('#SlipData td[class="sub_code"]').eq(tdIndex-1).children('span').text($(item).text());
+			}else if(index == 1){
+				$('#SlipData td[class="sub_name"]').eq(tdIndex-1).children('span').children('input').val($(item).text());
+			}
+		});
+	}
+	//계정과목 더블클릭시 선택 기능
+	$(document).on('dblclick','.SubTable td', function() {
+		selectSubTable($(this));
+		closeSubPop();
+	});
+
+$(document).on('keyup','input[class="SlipInput"][name="sub_name"]', function(e) {
+	if(e.keyCode == 13){
+		subPopup($(this).val());
+	}
+})
+	
+//가격입력시 엔터, 포커스 아웃 하면 부가세 계산 (매출매입)
+$(document).on('keyup','input[class="SlipInput"][name="price"]', function(e) {
+	if(e.keyCode== 13){
+		$('input[class="SlipInput"][name="memo"]').select();
+	}
+});
+$(document).on('focusout','input[class="SlipInput"][name="price"]', function() {
+	calculateSlip();
+});
+
+$(document).on('keyup','input[class="SlipInput"][name="collect"]', function(e) {
+	if(e.keyCode == 13){
+		CollectPop($(this));
+	}
+});
+$(document).on('click','#reset', function() {
+	selectSlips($('input[name="cust_code"]').val(),$('input[name="date"]').val(), $('input[class="nowTab"]').val());
+});	
+
+//Slip테이블 Input모드로 변경 하단부 매출/매입/비용/수동에 따라서 다르게 불러오기(매출매입)
+function updateSlipInput(td) {
+	var nowTab = $('input[name="nowTab"]');
+	if(nowTab.val()=="매출"|| nowTab.val()=="매입"){
+		if(td.attr('state')=="view"){
+			resetSlipInput(); //다른부분에 인풋으로 되어있다면 원래대로 수정
+			
+			td.parent().children('td').children('span').each(function(index, item) {
+				values[index] = $(item).text();
+				names[index] = $(item).parent().attr('class');
+				if(index==0 || index == 2){
+					
+				}else {
+				$(item).text("");
+				$(item).html('<input class="SlipInput" type="text" name="'+names[index]+'" value="'+values[index]+'">');
+				$(item).parent().attr('state','update');
+				$('#SlipData td[state="update"][class="collect"] > span > input').attr('placeholder','Enter를 눌러 입력할 수 있습니다.');
+				$('#SlipData td[state="update"][class="collect"] > span > input').attr('readonly','readonly');
+				}
+			});
+		}
+		//매출,매입
+		if($('#SlipData td[class="stk_name"][state="update"]').children('input[name="stk_code"]').val() != "" || $('#SlipData td[class="stk_code"][state="update"]').children('input[name="stk_code"]').val() != null){
+			$('#SlipData td[class="collect"][state="update"]').children('span').children('input[name="collect"]').attr('disabled','disabled');
+		}
+		if($('#SlipData td[class="collect"][state="update"]').children('span').children('input[name="collect"]').val() != "" || $('#SlipData td[class="collect"][state="update"]').children('span').children('input[name="collect"]').attr('readonly') != "readonly"){
+			$('#SlipData td[class="stk_name"][state="update"]').children('span').children('input[name="stk_name"]').attr('disabled','disabled');
+		}
+	}else if(nowTab.val()=="비용"){
+		resetSlipInput();
+		td.parent().children('td').children('span').each(function(index, item) {
+			values[index] = $(item).text();
+			names[index] = $(item).parent().attr('class');
+			if(index==0 || index == 2 || index == 4){
+				
+			}else {
+			$(item).text("");
+			$(item).html('<input class="SlipInput" type="text" name="'+names[index]+'" value="'+values[index]+'">');
+			$(item).parent().attr('state','update');
+			}
+		});
+	}
+	
+
+	td.children('span').children('input').select();
+}
 
 </script>
 <body>
@@ -709,6 +881,7 @@ $(document).ready(function() {
 				<input class="TabBtn PurchaseBtn"  type="button" value="매입">
 				<input class="TabBtn expenseBtn"  type="button" value="비용">
 				<input class="TabBtn journalizingBtn"  type="button" value="수동">
+				<input class="nowTab" name="nowTab" type="hidden" value="매출">
 			 </div>
 			<div class="SalesStateDiv">
 				
@@ -773,6 +946,7 @@ $(document).ready(function() {
 <div class="SlipViewerContainer">
 	<div class="tableController">
 		<input id="rowCreate" type="button" value="행추가" onclick="SlipTableRowCreate()">
+		<input id="rowDelete" type="button" value="전표삭제" >
 	</div>
 	<div>
 	<table id="SlipViewer">
@@ -816,6 +990,7 @@ $(document).ready(function() {
 	</table>
 	</div>
 	<div class="SlipController"><input id="save" type="button" value="저장"><input id="reset" type="button" value="초기화"></div>
+	
 </div>
 	<div id="pager"></div>
 	</div>
