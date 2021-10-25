@@ -21,12 +21,13 @@ public class SendMail {
 		final String user = "kre1914@naver.com";
 		final String password = "rmdwjd?1!=";
 		
-	public HashMap<String,String> excute(String email, String title, String text){
+	public boolean excute(String email, String title, String text){
 		
+		boolean result = false;
 		//naver SMTP 정보
 		Properties prop = new Properties();
 		prop.put("mail.smtp.host", "smtp.naver.com"); 
-		prop.put("mail.smtp.port", 587); 
+		prop.put("mail.smtp.port", 465); 
 		prop.put("mail.smtp.auth", "true"); 
 		prop.put("mail.smtp.ssl.enable", "true"); 
 		prop.put("mail.smtp.ssl.trust", "smtp.naver.com");
@@ -37,7 +38,6 @@ public class SendMail {
                 return new PasswordAuthentication(user, password);
             }
         });
-		
 		 try {
 	            MimeMessage message = new MimeMessage(session);
 	            
@@ -56,8 +56,7 @@ public class SendMail {
 	            // send the message
 	            Transport.send(message); ////전송
 	            System.out.println("message sent successfully...");
-			 result.put("result", "true");
-			 Date date = new Date();
+	            result = true;
 			 
 			 
 	        } catch (AddressException e) {

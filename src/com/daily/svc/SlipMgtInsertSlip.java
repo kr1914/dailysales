@@ -31,6 +31,8 @@ public class SlipMgtInsertSlip {
 			dba.rollback();
 		}
 		
+		dba.close();
+		
 		return r;
 	}
 }

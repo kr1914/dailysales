@@ -1,20 +1,38 @@
+<%@page import="java.util.HashMap"%>
+<%@page import="java.util.Map"%>
+<%@page import="java.util.List"%>
+<%@page import="com.daily.dao.DbAcesse"%>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <% request.setCharacterEncoding("utf-8"); %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<!DOCTYPE html>
-<html lang="ko" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title></title>
-  </head>
-  <body>
-  </body>
-</html>
-<sql:setDataSource var="db" driver="com.mysql.jdbc.Driver" url="jdbc:mysql://localhost:3306/dailysal?useUnicode=true&characterEncoding=utf8" user="root" password="810904"/>
-<sql:update var="crt" dataSource="${db}">
-insert into member values('<%=request.getParameter("email") %>','<%=request.getParameter("nickname") %>','<%=request.getParameter("name") %>','<%=request.getParameter("pwd1") %>','<%=request.getParameter("phone1")+request.getParameter("phone2")+request.getParameter("phone3")%>','<%= request.getParameter("address") %>','<%= request.getParameter("address2")+""+request.getParameter("address3") %>','<%= request.getParameter("birth") %>','<%= request.getParameter("gender") %>','2021-07-12','test');
-</sql:update>
+<%
+	DbAcesse dao = DbAcesse.getInstance();
+	Map<String, String> info = new HashMap<String, String>();
+	info.put("email", request.getParameter("email"));
+	info.put("nickname", request.getParameter("nickname"));
+	info.put("name",request.getParameter("name"));
+	info.put("pwd1",request.getParameter("pwd1"));
+	info.put("phone1",request.getParameter("phone1"));
+	info.put("phone2",request.getParameter("phone2"));
+	info.put("phone3",request.getParameter("phone3"));
+	info.put("address",request.getParameter("address"));
+	info.put("address2",request.getParameter("address2"));
+	info.put("address3",request.getParameter("address3"));
+	info.put("birth",request.getParameter("birth"));
+	info.put("gender",request.getParameter("gender"));
 
+	int result = dao.crtId(info);
+	
+	if(result>0){
+		dao.commit();
+	}else {
+		dao.rollback();
+		out.println("<script>");
+		out.println("alert('가입 실패');");
+		out.println("history.back()");
+		out.println("<script>");
+	}
+%>
 <% response.sendRedirect("main.jsp");%>

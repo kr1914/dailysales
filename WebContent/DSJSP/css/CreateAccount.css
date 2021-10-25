@@ -114,6 +114,7 @@ section {
 	margin-top: 5px;
 	border: solid 2px #716fcb80;
 	margin-left: 30px;
+	cursor: pointer;
 
 }
 #btnImg{
@@ -134,12 +135,26 @@ section {
 	margin-top: 5px;
 	border-radius: 3px 3px 19px 3px / 3px 3px 19px 3px;
 }
+#authenBtn{
+	width: 60px;
+    height: 40px;
+    outline: none;
+    border: solid 2px #4e4eff;
+    background-color: #6a6acb;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
 #create{
 	width: 100%;
 	height:40px;
 	margin-top: 40px;
 	border: none;
 	background-color:  #dacaca;
+}
+.time{
+	margin-left: 10px;
+	color:red;
 }
 #terms {
 	margin-top: 20px;

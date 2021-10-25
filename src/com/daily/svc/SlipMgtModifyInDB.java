@@ -30,6 +30,8 @@ public class SlipMgtModifyInDB {
 			dba.rollback();
 		}
 		
+		dba.close();
+		
 		return r;
 	}
 }

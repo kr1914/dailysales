@@ -9,50 +9,52 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.daily.action.AcctMgtDelete;
+import com.daily.action.AcctMgtInsert;
+import com.daily.action.AcctMgtListView;
+import com.daily.action.AcctMgtModify;
+import com.daily.action.AcctMgtSearch;
+import com.daily.action.AcctMgtView;
+import com.daily.action.Action;
+import com.daily.action.CrtMgtCheckCode;
+import com.daily.action.CrtMgtCodeSend;
+import com.daily.action.CustMgtDelete;
+import com.daily.action.CustMgtInsert;
+import com.daily.action.CustMgtListView;
+import com.daily.action.CustMgtModify;
+import com.daily.action.CustMgtSearch;
+import com.daily.action.CustMgtView;
+import com.daily.action.MainPage;
+import com.daily.action.MyCoChange;
+import com.daily.action.MyCoInsert;
+import com.daily.action.MyCoModify;
+import com.daily.action.MyCoView;
+import com.daily.action.SlipMgtAcctListPop;
+import com.daily.action.SlipMgtCustDelete;
+import com.daily.action.SlipMgtCustInsert;
+import com.daily.action.SlipMgtCustListPop;
+import com.daily.action.SlipMgtCustModify;
+import com.daily.action.SlipMgtCustSearch;
+import com.daily.action.SlipMgtCustView;
+import com.daily.action.SlipMgtDelete;
+import com.daily.action.SlipMgtStkListPop;
+import com.daily.action.SlipMgtStkListSearch;
+import com.daily.action.SlipMgtStkSearch;
+import com.daily.action.SlipMgtStkSelectOne;
+import com.daily.action.SlipMgtSubListPop;
+import com.daily.action.SlipMgtsaveSlip;
+import com.daily.action.SlipMgtselectSlips;
+import com.daily.action.SlipMgtselectSub;
+import com.daily.action.SlipTabChange;
+import com.daily.action.StkMgtDelete;
+import com.daily.action.StkMgtInsert;
+import com.daily.action.StkMgtListView;
+import com.daily.action.StkMgtModify;
+import com.daily.action.StkMgtSearch;
+import com.daily.action.StkMgtView;
+import com.daily.action.board.ViewBoardList;
+import com.daily.action.report.CustLedgerReport;
 import com.daily.dto.ActionForward;
-
-import action.AcctMgtDelete;
-import action.AcctMgtInsert;
-import action.AcctMgtListView;
-import action.AcctMgtModify;
-import action.AcctMgtSearch;
-import action.AcctMgtView;
-import action.Action;
-import action.CrtMgtCodeSend;
-import action.CustMgtDelete;
-import action.CustMgtInsert;
-import action.CustMgtListView;
-import action.CustMgtModify;
-import action.CustMgtSearch;
-import action.CustMgtView;
-import action.MainPage;
-import action.MyCoChange;
-import action.MyCoInsert;
-import action.MyCoModify;
-import action.MyCoView;
-import action.SlipMgtAcctListPop;
-import action.SlipMgtCustDelete;
-import action.SlipMgtCustInsert;
-import action.SlipMgtCustListPop;
-import action.SlipMgtCustModify;
-import action.SlipMgtCustSearch;
-import action.SlipMgtCustView;
-import action.SlipMgtDelete;
-import action.SlipMgtStkListPop;
-import action.SlipMgtStkListSearch;
-import action.SlipMgtStkSearch;
-import action.SlipMgtStkSelectOne;
-import action.SlipMgtSubListPop;
-import action.StkMgtDelete;
-import action.StkMgtInsert;
-import action.StkMgtListView;
-import action.StkMgtModify;
-import action.StkMgtSearch;
-import action.StkMgtView;
-import action.SlipMgtsaveSlip;
-import action.SlipMgtselectSlips;
-import action.SlipMgtselectSub;
-import action.SlipTabChange;
 
 @WebServlet("*.do")
 public class Controller extends javax.servlet.http.HttpServlet {
@@ -69,7 +71,7 @@ public class Controller extends javax.servlet.http.HttpServlet {
 		String command=request.getServletPath();
 		ActionForward forward=null;
 		Action action=null;
-
+		
 		System.out.println(command);
 	
 	if(command.equals("/DSJSP/MyCoMgt/MyCoInsert.do")) {
@@ -232,7 +234,7 @@ public class Controller extends javax.servlet.http.HttpServlet {
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
-	}else if(command.equals("/DSJSP/Slip/SlipMgtCustSearch.do")) {
+	}else if(command.equals("/DSJSP/Slip/SlipMgtCustSearch.do") || command.equals("/dailySales/DSJSP/Slip/SlipMgtCustSearch.do")) {
 		action = new SlipMgtCustSearch();
 		try {
 			forward = action.execute(request, response);
@@ -250,7 +252,7 @@ public class Controller extends javax.servlet.http.HttpServlet {
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
-	}else if(command.equals("/DSJSP/Slip/SlipMgtCustListPop.do")) {
+	}else if(command.equals("/DSJSP/Slip/SlipMgtCustListPop.do") || command.equals("/dailySales/DSJSP/Slip/SlipMgtCustListPop.do")) {
 		action = new SlipMgtCustListPop();
 		try {
 			forward = action.execute(request, response);
@@ -373,15 +375,19 @@ public class Controller extends javax.servlet.http.HttpServlet {
 		forward=new ActionForward();
 		forward.setPath("Board/Board.jsp");
 		forward.setRedirect(true);
-	}else if(command.equals("/DSJSP/Board/WriteGuide.do")) {
+	}else if(command.equals("/DSJSP/Board2.do")) {
 		forward=new ActionForward();
-		forward.setPath("WriteGuide.jsp");
+		forward.setPath("Board/Board2.jsp");
 		forward.setRedirect(true);
 	}else if(command.equals("/DSJSP/Board/WriteGuide.do")) {
 		forward=new ActionForward();
 		forward.setPath("WriteGuide.jsp");
 		forward.setRedirect(true);
-	}else if(command.equals("/DSJSP/index.do")) {
+	}else if(command.equals("/DSJSP/Board/WriteGuide.do")) {
+		forward=new ActionForward();
+		forward.setPath("WriteGuide.jsp");
+		forward.setRedirect(true);
+	}else if(command.equals("/index.do")) {
 		forward=new ActionForward();
 		forward.setPath("DSJSP/nav.jsp");
 		forward.setRedirect(true);
@@ -420,7 +426,39 @@ public class Controller extends javax.servlet.http.HttpServlet {
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
+	}else if(command.equals("/DSJSP/checkAuthen.do")) {
+		action = new CrtMgtCheckCode();
+		try {
+			forward = action.execute(request, response);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}else if(command.equals("/DSJSP/authenCodeDelete.do")) {
+		forward=new ActionForward();
+		forward.setPath("DSJSP/authenCodeDelete.jsp");
+		forward.setRedirect(true);
+	}else if(command.equals("/DSJSP/custReportView.do")) {
+		forward=new ActionForward();
+		forward.setPath("Report/custLedgers.jsp");
+		forward.setRedirect(true);
+	}else if(command.equals("/DSJSP/Report/CustLedgerReport.do")) {
+		action = new CustLedgerReport();
+		try {
+			forward = action.execute(request, response);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}else if(command.equals("/DSJSP/Board/BoardList.do")) {
+		action = new ViewBoardList();
+		try {
+			forward = action.execute(request, response);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
+	
+	
+	
 	
 	
 	

@@ -20,6 +20,7 @@ public class CustInsertIntoDB {
 			dba.rollback();
 		}
 		
+		dba.close();
 		
 		return r;
 	}

@@ -22,6 +22,7 @@ public class MyCoInsertIntoDB {
 			dba.rollback();
 		}
 		
+		dba.close();
 		
 		return r;
 	}

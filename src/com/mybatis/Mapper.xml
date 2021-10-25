@@ -39,7 +39,19 @@ on a.m_ide=b.mgr_email;
   	select if(count(*)=1,1,0) from member where m_ide='${id}';
   </select>
   
+  <!-- 회원가입 -->
+  <insert id="crtId" parameterType="map">
+  insert into member values('${email}','${nickname}','${name}','${pwd1}','${phone1+phone2+phone3}','${address}','${address2+address3}','${birth}','${gender}',now(),'test');
+  </insert>
+  
   <!-- 게시판 -->
+  <!-- 게시글 숫자 확인 -->
+  <select id="countArticle" resultType="Integer" parameterType="String">
+  select count(*) from board 
+  <if test="type != null and type == 'board'">where bd_header != '이용가이드'</if>
+  <if test="type != null and type == 'guide'">where bd_header = '이용가이드'</if>
+  ;
+  </select>
   <!-- 자유게시판 -->
 <select id="boardSelect" resultType="map">
 select bd_index, bd_header, bd_title, bd_creator, bd_date, bd_view, ifnull(lk,0) lk from board left join (select distinct like_article, sum(like_state) lk from likey group by like_article) b on board.bd_index = b.like_article where bd_header not in ('이용가이드') order by bd_index desc;
@@ -191,12 +203,12 @@ select bd_index, bd_header, bd_title, bd_creator, bd_date, bd_view, ifnull(lk,0)
   
  <!-- 메인페이지 게시글 -->
   <select id="mainPageArticles" resultType="map">
-  select bd_index, bd_title as 'article', date_format(bd_date,"%m-%d") as 'date' from board order by bd_index desc limit 0,6;
+  select bd_index, bd_title as 'board', date_format(bd_date,"%m-%d") as 'date' from (select * from board where bd_header!='이용가이드') board order by bd_index desc limit 0,6;
   </select>
   
   <!-- 메인페이지 이용안내 -->
   <select id="mainPageGuide" resultType="map">
-  select bd_index, bd_title as 'guide', date_format(bd_date,"%m-%d") as 'date' from board order by bd_index desc limit 0,6;
+  select bd_index, bd_title as 'guide', date_format(bd_date,"%m-%d") as 'date' from (select * from board where bd_header='이용가이드') board order by bd_index desc limit 0,6;
   </select>
   
  <!-- 매출 차트 데이터 출력 -->
@@ -511,5 +523,41 @@ order by tran_index;
 	select * from (select * from acct_subject where sub_code > 500) acc_subject where sub_name like '%${key}%';
 	</select>
 	
+	<!-- 거래처 원장 -->
+	<select id="custLedgers" parameterType="map" resultType="map">
+select tran_index, tran_cla, date_format(tran_date, '%Y-%m-%d') as tran_date, stk, format(ts_quantity,0) ts_quantity,format(ts_price,0) ts_price, acct_name, d.sub_name, format(d.sl_amount,0) purcharse, e.sub_name, format(e.sl_amount,0) pur_vat, c.sub_name, format(c.sl_amount,0) payment, a.sub_name, format(a.sl_amount,0) sales, b.sub_name, format(b.sl_amount,0) vat
+from (select * from tran_slip where sl_cust=${custCode} group by sl_tran) tran join (select * from transaction where tran_date between '${startDate}' and '${endDate}' and admin_key='${adminKey}') transaction
+on sl_tran=tran_index
+left join (select ts_tran, concat(stk_name,':',stk_size1,'/',stk_size2) stk, ts_quantity, ts_price from tran_stk left join stock on ts_stk=stk_code) t
+on tran_index=ts_tran
+left join (select ta_tran, ta_acct, acct_name from tran_acct left join bank_account on ta_acct=acct_code) ac
+on tran_index=ta_tran
+left join (select sl_tran, sl_cust, sl_amount, sub_name from tran_slip left join acct_subject on sl_sub=sub_code where sl_sub=460) d
+on tran_index=d.sl_tran
+left join (select sl_tran, sl_cust, sl_amount, sub_name from tran_slip left join acct_subject on sl_sub=sub_code where sl_sub=135) e
+on tran_index=e.sl_tran
+left join (select sl_tran, sl_cust, sl_amount, sub_name from tran_slip left join acct_subject on sl_sub=sub_code where sl_sub=412) a
+on tran_index=a.sl_tran
+left join (select sl_tran, sl_cust, sl_amount, sub_name from tran_slip left join acct_subject on sl_sub=sub_code where sl_sub=255) b
+on tran_index=b.sl_tran
+left join (select sl_tran, sl_cust, sl_amount, sub_name from tran_slip left join acct_subject on sl_sub=sub_code where sl_sub in (101,102,103)) c
+on tran_index=c.sl_tran
+order by tran_date asc, tran_index asc;
+
+	</select>
+	
+	<!-- 게시판 페이지 적용 -->
+	
+<select id="selectBoard" parameterType="map" resultType="map">
+select bd_index, bd_header, bd_title, bd_date, bd_view, m_nick, likecount lk, bd_creator
+from (select * from board <if test="type != null and type == 'board'">where bd_header != '이용가이드'</if><if test="type != null and type == 'guide'">where bd_header = '이용가이드'</if>) board 
+left join member 
+on bd_creator=m_ide 
+left join (select like_article, sum(like_state) likecount from likey group by like_article) lk 
+on bd_index=lk.like_article 
+order by bd_index desc 
+limit ${start}, ${end};
+</select>	
+
 	
 </mapper>

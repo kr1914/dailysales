@@ -41,6 +41,7 @@ public class MyCoModifyInDB {
 			dba.rollback();
 		}
 		
+		dba.close();
 		
 		return r;
 	}

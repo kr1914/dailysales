@@ -9,7 +9,7 @@
 <%
 	DbAcesse dao = DbAcesse.getInstance();
 	List<Map<String,Object>> articles = null;
-	articles = (List<Map<String,Object>>)dao.selectBoard();
+	articles = (List<Map<String,Object>>)dao.boardSelect();
 %>
 <c:set var="boardList" value="<%=articles%>"></c:set>
 

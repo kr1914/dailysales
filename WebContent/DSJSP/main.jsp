@@ -16,7 +16,6 @@
 		chart = (List<Map<String, Object>>)request.getAttribute("chartData");
 		custSales = (List<Map<String, Object>>)request.getAttribute("custSales");
 		guide = (List<Map<String, Object>>)request.getAttribute("guide");
-
 %>
 
 <!DOCTYPE html>
@@ -217,7 +216,7 @@
 			   	<table class="table table-striped board">
 			   	<% for(Map<String,Object> bd : board){ %>
 			   		<tr>
-			   			<td><a href="Board/ViewArticle.jsp?bd_index=<%=bd.get("bd_index")%>"><%=bd.get("article") %></a> </td>
+			   			<td><a href="Board/ViewArticle.jsp?bd_index=<%=bd.get("bd_index")%>"><%=bd.get("board") %></a> </td>
 			   			<td><%=bd.get("date") %></td>
 		   			</tr>
 	   			<%} %>

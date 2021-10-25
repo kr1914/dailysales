@@ -1,3 +1,5 @@
+
+
 $(function functionName() {
   $('#input2').hide();
   $('#btnImg').click(function () {
@@ -261,7 +263,38 @@ $(function functionName() {
 				alert("연결 오류");
 			},
 			success: function(e) {
-				alert("인증번호가 발송되었습니다.");
+				k = codeLimit($('.time'), 300); //시간표시할 부분, 입력 제한시간(초)
+				$('#authenBtn').removeAttr('disabled');
+			}
+		});
+	}
+	function codeLimit(span, time) {
+		var k = null;
+		if(k!=null){
+			clearInterval(k);
+		}
+		k = setInterval(function () {
+				var min = Math.floor(time/60);
+				var sec = time%60;
+				span.html(min+":"+sec);
+				time--;
+				
+				if(time<0){
+					$('#authenBtn').attr('disabled','disabled');
+					span.html("인증시간 만료");
+					codeDelete();
+					return;
+			}
+		}, 1000);
+	}
+	function codeDelete() {
+		$.ajax({
+			url:"authenCodeDelete.do",
+			error: function () {
+				console.log("연결 오류")
+			},
+			success: function() {
+				console.log("인증시간 초과");
 			}
 		});
 	}
@@ -297,11 +330,24 @@ $(function functionName() {
 				return false;
 			}
 		}
-		
-		
 	});
-
 	function today() {
 		return 
 	}
-})
+});
+//인증번호 확인
+$(document).on('click', '#authenBtn', function() {
+	var input = $(this).val();
+	$.ajax({
+		url:"checkAuthen.do",
+		data:{key:input},
+		error: function (e) {
+			alert("에러"+e);
+		},
+		success: function (e) {
+			$('#dupl').html(e);
+			$('#create').removeAttr('disabled');
+		}
+	});
+});
+

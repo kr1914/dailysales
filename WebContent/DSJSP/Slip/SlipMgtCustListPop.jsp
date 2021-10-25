@@ -148,12 +148,6 @@ nav{width:100%; height: 50px;}
 	}
 	
 			$(document).ready(function() {
-				$('.CustMgtTable_View').colResizable({
-					resizeMode:'flex',
-					headerOnly:'true',
-					liveDrag:true,
-					postbackSafe: true,
-				});
 				
 				$('#CustDelete').click(function () {
 					if(selectLine==null){
@@ -278,7 +272,9 @@ nav{width:100%; height: 50px;}
 			});
 			$(document).on('dblclick','.CustMgtTable td', function() {
 				selectCust($(this));
-				selectSlips($('input[name="cust_code"]').val(),$('input[name="date"]').val());
+				if($('.title').text == "거래처 관리"){
+					selectSlips($('input[name="cust_code"]').val(),$('input[name="date"]').val());
+				}
 			});
 
 		</script>

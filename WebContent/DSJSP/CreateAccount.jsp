@@ -82,8 +82,9 @@
             </div>
             <div id="crtAcc_footer">
               <div class="">
-                <input id="verification" type="text" name="check_code" value="">
+                <input id="verification" type="text" name="check_code" value=""><span class="time"></span>
                   <button id="verificationBtn"type="button" name="button">인증 메일 발송</button>
+      				<button id="authenBtn" type="button" name="authen" disabled="disabled">확인</button>
               </div>
               <div id="terms">
                 <span>
@@ -95,7 +96,7 @@
                 </span>
               </div>
               <div class="">
-                <input id="create" type="submit" name="button" value="회원가입">
+                <input id="create" type="submit" name="button" value="회원가입" disabled="disabled">
               </div>
             </div>
           </form>

@@ -125,7 +125,7 @@
             <div class="nav_btn_slide">
               <ul>
                 <li onclick="content.location.href='CustMgt/CustMgtListView.do'">거래처 목록 관리</li>
-                <li>거래처원장 관리</li>
+                <li onclick="content.location.href='custReportView.do'">거래처원장 관리</li>
               </ul>
             </div>
           </li>
@@ -217,7 +217,7 @@
        	 		<ol>
 	        		<li id="introMenu" class="header_nav_icon" onclick="content.location.href='intro.do'">소개</li>
 	        		<li class="header_nav_icon" onclick="content.location.href='Guide.do'">이용 가이드</li>
-	        		<li class="header_nav_icon" onclick="content.location.href='Board.do'">커뮤니티</li>
+	        		<li class="header_nav_icon" onclick="content.location.href='Board2.do'">커뮤니티</li>
 	        		<li class="header_nav_icon" onclick="content.location.href=''">사이트맵</li>
         		</ol>
         	</div>

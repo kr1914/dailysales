@@ -20,7 +20,7 @@ public class CustDeleteInDB {
 			dba.rollback();
 		}
 		
-		
+		dba.close();
 		return r;
 	}
 }

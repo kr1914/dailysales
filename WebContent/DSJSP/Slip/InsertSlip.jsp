@@ -294,6 +294,7 @@ function tabCSSChange(tab) {
 			'box-shadow':'2px 4px 8px 2px #e2e2e2',
 			'border':'solid 1px #e2e2e2'
 		});
+		alert("현재 수동분개 기능은 개발중에 있습니다.");
 	}
 }
 
