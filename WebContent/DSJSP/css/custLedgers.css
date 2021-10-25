@@ -1,0 +1,38 @@
+.ledgerWrap {
+	margin-top: 40px;
+	width: 100%;
+}
+
+.ledgersTitle{
+	font-size: 20px;
+    font-weight: bold;
+}
+
+header{
+	text-align: center;
+}
+
+.searchCust{
+	margin-top: 20px;
+}
+
+section {
+    width: 100%;
+    text-align: center;
+    margin-top: 40px;
+	}
+	
+.reportTableDiv{
+	width: 100%;
+}
+
+.reportTable{
+	margin: 0 auto;
+	font-size: 11px;
+}
+
+.reportTable th {
+	margin: 0 10px 0 10px;
+}
+
+.CustInfoTable{display:none;}
