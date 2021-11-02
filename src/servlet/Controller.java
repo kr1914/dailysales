@@ -455,6 +455,10 @@ public class Controller extends javax.servlet.http.HttpServlet {
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
+	}else if(command.equals("/DSJSP/myPage.do")) {
+		forward=new ActionForward();
+		forward.setPath("Member/Mypage.jsp");
+		forward.setRedirect(true);
 	}
 	
 	

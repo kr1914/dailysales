@@ -217,8 +217,8 @@
        	 		<ol>
 	        		<li id="introMenu" class="header_nav_icon" onclick="content.location.href='intro.do'">소개</li>
 	        		<li class="header_nav_icon" onclick="content.location.href='Guide.do'">이용 가이드</li>
-	        		<li class="header_nav_icon" onclick="content.location.href='Board2.do'">커뮤니티</li>
-	        		<li class="header_nav_icon" onclick="content.location.href=''">사이트맵</li>
+	        		<li class="header_nav_icon" onclick="content.location.href='Board.do'">커뮤니티</li>
+	        		<li class="header_nav_icon" onclick="content.location.href='myPage.do'">사이트맵</li>
         		</ol>
         	</div>
           <div id="header_login"></div>

@@ -43,6 +43,8 @@ on a.m_ide=b.mgr_email;
   <insert id="crtId" parameterType="map">
   insert into member values('${email}','${nickname}','${name}','${pwd1}','${phone1+phone2+phone3}','${address}','${address2+address3}','${birth}','${gender}',now(),'test');
   </insert>
+  <!-- 마이페이지 -->
+  <select id="myInfo" parameterType="map"></select>
   
   <!-- 게시판 -->
   <!-- 게시글 숫자 확인 -->
