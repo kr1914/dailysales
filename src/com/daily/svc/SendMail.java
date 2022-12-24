@@ -18,8 +18,8 @@ public class SendMail {
 		//Key값들 :: email:보낸 메일주소, result:성공or실패, time:발송시간
 		HashMap<String,String> result = null;
 		//SMTP 정보
-		final String user = "kre1914@naver.com";
-		final String password = "rmdwjd?1!=";
+		final String user = "";
+		final String password = "";
 		
 	public HashMap<String,String> excute(String email, String title, String text){
 		
